@@ -1,6 +1,5 @@
-
 import { Link } from 'react-router-dom';
-import { Instagram, Twitter, Facebook, YouTube, ArrowUp } from 'lucide-react';
+import { Instagram, Twitter, Facebook, Youtube, ArrowUp } from 'lucide-react';
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -50,7 +49,7 @@ const Footer = () => {
                 rel="noopener noreferrer" 
                 className="bg-white/10 hover:bg-white/20 rounded-full p-3 transition-colors duration-300"
               >
-                <YouTube size={20} />
+                <Youtube size={20} />
               </a>
             </div>
           </div>
