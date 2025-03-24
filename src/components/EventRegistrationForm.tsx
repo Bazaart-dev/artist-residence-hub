@@ -41,7 +41,7 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
   email: z.string().email({ message: "Email invalide" }),
   phone: z.string().min(10, { message: "Numéro de téléphone invalide" }),
-  participants: z.string().transform(val => parseInt(val, 10)),
+  participants: z.coerce.number().min(1), // Fixed: Using coerce.number() instead of string().transform
   specialRequests: z.string().optional(),
 });
 
@@ -56,7 +56,7 @@ const EventRegistrationForm = ({ event, onClose }: EventRegistrationFormProps) =
       name: "",
       email: "",
       phone: "",
-      participants: "1", // This is a string, which will be transformed to number by the schema
+      participants: 1, // Changed to number
       specialRequests: "",
     },
   });
@@ -154,7 +154,7 @@ const EventRegistrationForm = ({ event, onClose }: EventRegistrationFormProps) =
                   <FormItem>
                     <FormLabel>Nombre de participants</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => field.onChange(Number(value))}
                       defaultValue={field.value.toString()}
                     >
                       <FormControl>

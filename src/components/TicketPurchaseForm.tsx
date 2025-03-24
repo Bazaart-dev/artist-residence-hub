@@ -40,7 +40,7 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
   email: z.string().email({ message: "Email invalide" }),
   ticketType: z.string(),
-  quantity: z.string().transform(val => parseInt(val, 10)),
+  quantity: z.coerce.number().min(1), // Fixed: Using coerce.number() instead of string().transform
   cardNumber: z.string().min(16, { message: "Numéro de carte invalide" }),
   expiryDate: z.string().min(5, { message: "Date d'expiration invalide" }),
   cvv: z.string().min(3, { message: "CVV invalide" }),
@@ -58,7 +58,7 @@ const TicketPurchaseForm = ({ event, onClose }: TicketPurchaseFormProps) => {
       name: "",
       email: "",
       ticketType: "standard",
-      quantity: "1",
+      quantity: 1, // Changed to number
       cardNumber: "",
       expiryDate: "",
       cvv: "",
@@ -94,7 +94,7 @@ const TicketPurchaseForm = ({ event, onClose }: TicketPurchaseFormProps) => {
 
   const calculateTotal = () => {
     const ticketType = form.watch('ticketType');
-    const quantity = parseInt(form.watch('quantity') || "1", 10);
+    const quantity = form.watch('quantity');
     
     let price = 0;
     switch(ticketType) {
@@ -245,8 +245,8 @@ const TicketPurchaseForm = ({ event, onClose }: TicketPurchaseFormProps) => {
                       <FormItem>
                         <FormLabel>Quantité</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          onValueChange={(value) => field.onChange(Number(value))}
+                          defaultValue={field.value.toString()}
                         >
                           <FormControl>
                             <SelectTrigger>
