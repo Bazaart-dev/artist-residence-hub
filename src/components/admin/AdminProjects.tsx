@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Edit, Trash, Search, Filter, Eye } from 'lucide-react';
@@ -28,31 +27,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface Project {
-  id: number;
-  title: string;
-  slug: string;
-  status: 'published' | 'draft';
-  date: string;
-  author: string;
-}
-
-const projectsData: Project[] = [
-  { id: 1, title: 'Bazaart Club', slug: 'bazaart-club', status: 'published', date: '15/04/2023', author: 'Admin' },
-  { id: 2, title: 'Bazaart Home', slug: 'bazaart-home', status: 'published', date: '23/05/2023', author: 'Admin' },
-  { id: 3, title: 'Bazaart Design', slug: 'bazaart-design', status: 'published', date: '07/07/2023', author: 'Admin' },
-  { id: 4, title: 'Bazaart Food', slug: 'bazaart-food', status: 'draft', date: '18/08/2023', author: 'Admin' },
-  { id: 5, title: 'Bazaart Lab', slug: 'bazaart-lab', status: 'published', date: '30/09/2023', author: 'Admin' },
-  { id: 6, title: 'Collaboration artistique internationale', slug: 'collab-artistique', status: 'draft', date: '12/10/2023', author: 'Admin' },
-  { id: 7, title: 'Festival des cultures urbaines', slug: 'festival-cultures-urbaines', status: 'published', date: '05/11/2023', author: 'Admin' },
-  { id: 8, title: 'Résidence d\'artistes 2024', slug: 'residence-artistes-2024', status: 'draft', date: '20/12/2023', author: 'Admin' },
-];
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import ProjectForm from './forms/ProjectForm';
+import { useSite, Project } from '@/contexts/SiteContext';
 
 const AdminProjects = () => {
-  const [projects, setProjects] = useState<Project[]>(projectsData);
+  const { data, addProject, updateProject, deleteProject } = useSite();
+  const [projects, setProjects] = useState<Project[]>(data.projects);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
+  
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentProject, setCurrentProject] = useState<Project | undefined>(undefined);
+  
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
+
+  useState(() => {
+    setProjects(data.projects);
+  });
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(search.toLowerCase()) || 
@@ -62,14 +65,57 @@ const AdminProjects = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const handleDelete = (id: number) => {
-    setProjects(prev => prev.filter(project => project.id !== id));
-    toast.success("Projet supprimé avec succès");
+  const handleOpenNewProjectForm = () => {
+    setCurrentProject(undefined);
+    setIsEditMode(false);
+    setIsFormOpen(true);
   };
 
-  const handleEdit = (id: number) => {
-    toast.info(`Modification du projet #${id}`);
-    // Implémentation de l'édition à venir
+  const handleOpenEditForm = (project: Project) => {
+    setCurrentProject(project);
+    setIsEditMode(true);
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+  };
+
+  const handleFormSubmit = (formData: Omit<Project, 'id' | 'author'>) => {
+    if (isEditMode && currentProject) {
+      const updatedProject = {
+        ...currentProject,
+        ...formData,
+      };
+      updateProject(updatedProject);
+      setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
+      toast.success("Projet modifié avec succès");
+    } else {
+      const newProject = {
+        ...formData,
+        id: Math.max(0, ...projects.map(p => p.id)) + 1,
+        author: 'Admin',
+      };
+      addProject(newProject);
+      setProjects(prev => [...prev, newProject]);
+      toast.success("Projet créé avec succès");
+    }
+    setIsFormOpen(false);
+  };
+
+  const handleOpenDeleteDialog = (id: number) => {
+    setProjectToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (projectToDelete) {
+      deleteProject(projectToDelete);
+      setProjects(prev => prev.filter(project => project.id !== projectToDelete));
+      toast.success("Projet supprimé avec succès");
+      setIsDeleteDialogOpen(false);
+      setProjectToDelete(null);
+    }
   };
 
   const containerVariants = {
@@ -91,7 +137,10 @@ const AdminProjects = () => {
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-display font-bold">Projets</h1>
-        <Button className="bg-bazaart-pink hover:bg-bazaart-salmon text-bazaart-black">
+        <Button 
+          className="bg-bazaart-pink hover:bg-bazaart-salmon text-bazaart-black"
+          onClick={handleOpenNewProjectForm}
+        >
           <Plus size={16} className="mr-2" /> Nouveau projet
         </Button>
       </div>
@@ -176,10 +225,15 @@ const AdminProjects = () => {
                           <Button variant="ghost" size="icon" onClick={() => window.open(`/projets/${project.slug}`, '_blank')}>
                             <Eye size={16} />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(project.id)}>
+                          <Button variant="ghost" size="icon" onClick={() => handleOpenEditForm(project)}>
                             <Edit size={16} />
                           </Button>
-                          <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDelete(project.id)}>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-red-500" 
+                            onClick={() => handleOpenDeleteDialog(project.id)}
+                          >
                             <Trash size={16} />
                           </Button>
                         </div>
@@ -197,6 +251,31 @@ const AdminProjects = () => {
           </div>
         </CardFooter>
       </Card>
+
+      <ProjectForm 
+        open={isFormOpen}
+        onClose={handleCloseForm}
+        onSubmit={handleFormSubmit}
+        project={currentProject}
+        isEdit={isEditMode}
+      />
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer ce projet ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est irréversible. Le projet sera définitivement supprimé.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-500 hover:bg-red-600">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   );
 };

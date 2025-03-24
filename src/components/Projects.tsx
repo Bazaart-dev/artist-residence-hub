@@ -2,41 +2,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Calendar, MapPin, Users } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-
-const projectsData = [
-  {
-    id: 1,
-    title: "Résidence Artistique Internationale",
-    category: "Bazaart Home",
-    description: "Programme de résidence pour artistes internationaux explorant les thématiques afro-diasporiques.",
-    image: "https://images.unsplash.com/photo-1578926288207-32356af70663?q=80&w=500&auto=format&fit=crop",
-    date: "Mai - Août 2023",
-    location: "Paris, France",
-    participants: "12 artistes"
-  },
-  {
-    id: 2,
-    title: "Festival des Arts Afro-Contemporains",
-    category: "Bazaart Club",
-    description: "Célébration annuelle présentant des performances, expositions et ateliers.",
-    image: "https://images.unsplash.com/photo-1576502200916-f1d9ac915c84?q=80&w=500&auto=format&fit=crop",
-    date: "Octobre 2023",
-    location: "Marseille, France",
-    participants: "30+ artistes"
-  },
-  {
-    id: 3,
-    title: "Atelier Design Collaboratif",
-    category: "Bazaart Design",
-    description: "Workshops de création textile s'inspirant des traditions et techniques ancestrales.",
-    image: "https://images.unsplash.com/photo-1596466220697-248b10df77b9?q=80&w=500&auto=format&fit=crop",
-    date: "En cours",
-    location: "Lyon, France",
-    participants: "Ouvert à tous"
-  },
-];
+import { useSite } from '@/contexts/SiteContext';
+import { Link } from 'react-router-dom';
 
 const Projects = () => {
+  const { data } = useSite();
+  const { projects } = data;
+  
+  // Afficher uniquement les projets publiés
+  const publishedProjects = projects.filter(project => project.status === 'published');
+  
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -71,7 +46,7 @@ const Projects = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projectsData.map((project, index) => (
+          {publishedProjects.slice(0, 3).map((project, index) => (
             <div 
               key={project.id}
               className={`glass-card overflow-hidden transition-all duration-700 delay-${100 * (index + 1)} ${
@@ -107,18 +82,22 @@ const Projects = () => {
                   </div>
                 </div>
                 
-                <Button variant="link" className="p-0 text-bazaart-black font-medium hover:text-bazaart-salmon flex items-center gap-1">
-                  En savoir plus <ArrowRight size={16} />
-                </Button>
+                <Link to={`/projets/${project.slug}`}>
+                  <Button variant="link" className="p-0 text-bazaart-black font-medium hover:text-bazaart-salmon flex items-center gap-1">
+                    En savoir plus <ArrowRight size={16} />
+                  </Button>
+                </Link>
               </div>
             </div>
           ))}
         </div>
 
         <div className="mt-16 text-center">
-          <Button className="rounded-full bg-bazaart-black text-white hover:bg-gray-800 px-8 py-6 text-lg">
-            Voir tous les projets
-          </Button>
+          <Link to="/projets" onClick={() => window.scrollTo(0, 0)}>
+            <Button className="rounded-full bg-bazaart-black text-white hover:bg-gray-800 px-8 py-6 text-lg">
+              Voir tous les projets
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

@@ -24,8 +24,10 @@ import AdminSettings from '@/components/admin/AdminSettings';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSite } from '@/contexts/SiteContext';
 
 const Admin = () => {
+  const { data } = useSite();
   const [activeTab, setActiveTab] = useState<string>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -80,6 +82,10 @@ const Admin = () => {
     }
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
@@ -98,7 +104,7 @@ const Admin = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/" className="text-sm flex items-center gap-1 hover:text-bazaart-pink transition-colors">
+            <Link to="/" onClick={scrollToTop} className="text-sm flex items-center gap-1 hover:text-bazaart-pink transition-colors">
               <Home size={16} />
               <span className="hidden sm:inline">Retour au site</span>
             </Link>
@@ -174,7 +180,7 @@ const Admin = () => {
                 
                 <Separator className="my-4" />
                 
-                <Link to="/" className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-500 hover:bg-red-50 transition-colors">
+                <Link to="/" onClick={scrollToTop} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-500 hover:bg-red-50 transition-colors">
                   <LogOut size={18} />
                   <span>Déconnexion</span>
                 </Link>
@@ -237,7 +243,7 @@ const Admin = () => {
             
             <Separator className="my-4" />
             
-            <Link to="/" className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-500 hover:bg-red-50 transition-colors">
+            <Link to="/" onClick={scrollToTop} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-500 hover:bg-red-50 transition-colors">
               <LogOut size={18} />
               <span>Déconnexion</span>
             </Link>

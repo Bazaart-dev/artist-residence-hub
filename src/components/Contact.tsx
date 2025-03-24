@@ -5,10 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
+import { useSite } from '@/contexts/SiteContext';
 
 const Contact = () => {
+  const { data } = useSite();
+  const { phone, email, address } = data.settings;
+  
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -43,7 +47,7 @@ const Contact = () => {
     setTimeout(() => {
       toast.success("Message envoyé avec succès!");
       setName('');
-      setEmail('');
+      setUserEmail('');
       setMessage('');
       setIsSubmitting(false);
     }, 1500);
@@ -72,7 +76,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold mb-1">Email</h3>
-                  <p className="text-gray-700">contact@bazaart.org</p>
+                  <p className="text-gray-700">{email}</p>
                 </div>
               </div>
               
@@ -82,7 +86,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold mb-1">Adresse</h3>
-                  <p className="text-gray-700">123 Avenue des Arts, 75001 Paris, France</p>
+                  <p className="text-gray-700">{address}</p>
                 </div>
               </div>
               
@@ -92,7 +96,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold mb-1">Téléphone</h3>
-                  <p className="text-gray-700">+33 (0)1 23 45 67 89</p>
+                  <p className="text-gray-700">{phone}</p>
                 </div>
               </div>
             </div>
@@ -124,8 +128,8 @@ const Contact = () => {
                   <Input
                     id="email"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
                     placeholder="votre@email.com"
                     required
                     className="w-full"
