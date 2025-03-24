@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
@@ -437,5 +438,30 @@ const Evenements = () => {
         </div>
       )}
 
-      {
+      {showRegistrationForm && registrationEvent && (
+        <EventRegistrationForm 
+          event={registrationEvent} 
+          onClose={() => setShowRegistrationForm(false)} 
+        />
+      )}
 
+      <Footer />
+
+      <style>
+        {`
+          @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+          }
+          
+          .bubble {
+            animation: float 15s ease-in-out infinite alternate;
+            border-radius: 50%;
+          }
+        `}
+      </style>
+    </div>
+  );
+};
+
+export default Evenements;
