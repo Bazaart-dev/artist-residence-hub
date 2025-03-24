@@ -54,7 +54,7 @@ const EventRegistrationForm = ({ event, onClose }: EventRegistrationFormProps) =
       name: "",
       email: "",
       phone: "",
-      participants: "1",
+      participants: "1", // This is a string, which will be transformed to number by the schema
       specialRequests: "",
     },
   });

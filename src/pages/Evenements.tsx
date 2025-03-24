@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
@@ -137,7 +136,6 @@ const Evenements = () => {
     setShowRegistrationForm(true);
   };
 
-  // Animations
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -160,7 +158,6 @@ const Evenements = () => {
     }
   };
 
-  // Cercles animés pour la décoration
   const bubbles = Array.from({ length: 15 }).map((_, i) => ({
     size: Math.random() * 120 + 60,
     position: {
@@ -182,7 +179,6 @@ const Evenements = () => {
     <div className="min-h-screen overflow-x-hidden">
       <Navigation />
 
-      {/* Cercles décoratifs animés */}
       {bubbles.map((bubble, index) => (
         <div
           key={index}
@@ -344,7 +340,6 @@ const Evenements = () => {
         </div>
       </div>
 
-      {/* Modal pour les détails d'événement */}
       {selectedEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div 
@@ -412,7 +407,6 @@ const Evenements = () => {
                   <h3 className="text-lg font-medium">Description</h3>
                   <p className="leading-relaxed">{selectedEvent.description}</p>
                   
-                  {/* Contenu supplémentaire pour le modal */}
                   <h3 className="text-lg font-medium pt-4">Informations pratiques</h3>
                   <p className="leading-relaxed">
                     L'inscription est recommandée mais non obligatoire pour participer à cet événement. 
@@ -443,30 +437,5 @@ const Evenements = () => {
         </div>
       )}
 
-      {/* Formulaire d'inscription */}
-      {showRegistrationForm && registrationEvent && (
-        <EventRegistrationForm 
-          event={registrationEvent} 
-          onClose={() => setShowRegistrationForm(false)} 
-        />
-      )}
+      {
 
-      <Footer />
-
-      {/* CSS pour les animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(10deg); }
-        }
-        
-        .bubble {
-          animation: float 15s ease-in-out infinite alternate;
-          border-radius: 50%;
-        }
-      `}</style>
-    </div>
-  );
-};
-
-export default Evenements;
