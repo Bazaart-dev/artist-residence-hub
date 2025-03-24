@@ -64,6 +64,8 @@ export default {
 					blue: '#bae1ff',
 					purple: '#d8b5ff',
 					black: '#111111',
+					yellow: '#ffeeb2',
+					orange: '#ffcd94',
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -124,6 +126,18 @@ export default {
 					'0%': { transform: 'rotate(0deg)' },
 					'100%': { transform: 'rotate(360deg)' },
 				},
+				'pulse-slow': {
+					'0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+					'50%': { opacity: '0.8', transform: 'scale(1.05)' },
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-20px)' },
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-100% 0' },
+					'100%': { backgroundPosition: '200% 0' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -133,6 +147,9 @@ export default {
 				'slide-in': 'slide-in 0.6s ease-out',
 				'slide-up': 'slide-up 0.8s ease-out',
 				'spin-slow': 'spin-slow 12s linear infinite',
+				'pulse-slow': 'pulse-slow 6s ease-in-out infinite',
+				'float': 'float 6s ease-in-out infinite',
+				'shimmer': 'shimmer 2s linear infinite',
 			}
 		}
 	},

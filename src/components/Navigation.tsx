@@ -25,6 +25,16 @@ const Navigation = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
@@ -43,11 +53,14 @@ const Navigation = () => {
             <Link to="/presentation" className="nav-item">Présentation</Link>
             <Link to="/projets" className="nav-item">Projets</Link>
             <Link to="/evenements" className="nav-item">Événements</Link>
-            <Link to="/contact" className="nav-item">Contact</Link>
+            <Link to="#" onClick={scrollToContact} className="nav-item">Contact</Link>
           </nav>
 
           <div className="hidden md:block">
-            <Button className="rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center gap-2">
+            <Button 
+              className="rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center gap-2"
+              onClick={scrollToContact}
+            >
               Nous rejoindre <ArrowRight size={16} />
             </Button>
           </div>
@@ -70,9 +83,12 @@ const Navigation = () => {
           <Link to="/presentation" className="text-2xl font-medium" onClick={toggleMenu}>Présentation</Link>
           <Link to="/projets" className="text-2xl font-medium" onClick={toggleMenu}>Projets</Link>
           <Link to="/evenements" className="text-2xl font-medium" onClick={toggleMenu}>Événements</Link>
-          <Link to="/contact" className="text-2xl font-medium" onClick={toggleMenu}>Contact</Link>
+          <Link to="#" onClick={scrollToContact} className="text-2xl font-medium">Contact</Link>
           
-          <Button className="mt-8 rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center justify-center gap-2">
+          <Button 
+            className="mt-8 rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center justify-center gap-2"
+            onClick={scrollToContact}
+          >
             Nous rejoindre <ArrowRight size={16} />
           </Button>
         </nav>
