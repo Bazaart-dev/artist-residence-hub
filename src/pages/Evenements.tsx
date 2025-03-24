@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import EventRegistrationForm from '@/components/EventRegistrationForm';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -116,6 +117,8 @@ const Evenements = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [registrationEvent, setRegistrationEvent] = useState<Event | null>(null);
   
   useEffect(() => {
     document.title = "Bazaart - Événements";
@@ -130,9 +133,8 @@ const Evenements = () => {
   });
 
   const handleRegister = (event: Event) => {
-    toast.success(`Inscription enregistrée pour "${event.title}"`, {
-      description: "Vous recevrez bientôt un email de confirmation",
-    });
+    setRegistrationEvent(event);
+    setShowRegistrationForm(true);
   };
 
   // Animations
@@ -158,14 +160,43 @@ const Evenements = () => {
     }
   };
 
+  // Cercles animés pour la décoration
+  const bubbles = Array.from({ length: 15 }).map((_, i) => ({
+    size: Math.random() * 120 + 60,
+    position: {
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+    },
+    color: [
+      "bg-bazaart-pink/20",
+      "bg-bazaart-blue/20",
+      "bg-bazaart-salmon/20",
+      "bg-purple-300/20",
+      "bg-yellow-300/20",
+    ][Math.floor(Math.random() * 5)],
+    delay: i * 0.2,
+    duration: Math.random() * 15 + 10,
+  }));
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       <Navigation />
 
-      {/* Cercles décoratifs */}
-      <div className="fixed -top-20 -right-20 w-96 h-96 rounded-full bg-bazaart-salmon opacity-20 z-0"></div>
-      <div className="fixed top-1/3 -left-20 w-72 h-72 rounded-full bg-bazaart-blue opacity-20 z-0"></div>
-      <div className="fixed bottom-20 right-1/3 w-60 h-60 rounded-full bg-bazaart-pink opacity-20 z-0"></div>
+      {/* Cercles décoratifs animés */}
+      {bubbles.map((bubble, index) => (
+        <div
+          key={index}
+          className={`bubble ${bubble.color} fixed -z-10`}
+          style={{
+            width: `${bubble.size}px`,
+            height: `${bubble.size}px`,
+            top: bubble.position.top,
+            left: bubble.position.left,
+            animationDelay: `${bubble.delay}s`,
+            animationDuration: `${bubble.duration}s`,
+          }}
+        />
+      ))}
 
       <div className="relative z-10 pt-24 px-6 md:px-12 lg:px-24">
         <motion.div
@@ -317,7 +348,7 @@ const Evenements = () => {
       {selectedEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div 
-            className="absolute inset-0 bg-black/60"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setSelectedEvent(null)}
           ></div>
           <motion.div 
@@ -412,11 +443,18 @@ const Evenements = () => {
         </div>
       )}
 
+      {/* Formulaire d'inscription */}
+      {showRegistrationForm && registrationEvent && (
+        <EventRegistrationForm 
+          event={registrationEvent} 
+          onClose={() => setShowRegistrationForm(false)} 
+        />
+      )}
+
       <Footer />
 
       {/* CSS pour les animations */}
-      <style>
-        {`
+      <style jsx>{`
         @keyframes float {
           0%, 100% { transform: translateY(0) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(10deg); }
@@ -424,9 +462,9 @@ const Evenements = () => {
         
         .bubble {
           animation: float 15s ease-in-out infinite alternate;
+          border-radius: 50%;
         }
-        `}
-      </style>
+      `}</style>
     </div>
   );
 };

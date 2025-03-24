@@ -46,7 +46,7 @@ const Hero = () => {
           <div className={`relative transition-all duration-1000 delay-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-16 opacity-0'}`}>
             <div className="relative rounded-3xl overflow-hidden aspect-[3/4] w-full max-w-lg mx-auto">
               <img 
-                src="/lovable-uploads/bdcc5bf4-1ea4-4eb0-bf20-90f01174a939.png" 
+                src="/lovable-uploads/587280d0-58a7-4361-bb1a-7f829a58c427.png" 
                 alt="Bazaart" 
                 className="w-full h-full object-cover"
               />

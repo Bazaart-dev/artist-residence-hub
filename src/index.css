@@ -90,9 +90,14 @@
     @apply animate-slide-up;
   }
 
-  /* Nouvelles animations */
+  /* Animations */
   .bubble {
     @apply absolute rounded-full opacity-40;
+    animation: float 15s ease-in-out infinite alternate;
+  }
+
+  .bubble-fixed {
+    @apply fixed rounded-full opacity-20 -z-10;
     animation: float 15s ease-in-out infinite alternate;
   }
 
@@ -116,6 +121,50 @@
   .stagger-appear > *:nth-child(4) { animation: fade-in 0.5s 0.4s forwards; }
   .stagger-appear > *:nth-child(5) { animation: fade-in 0.5s 0.5s forwards; }
   .stagger-appear > *:nth-child(6) { animation: fade-in 0.5s 0.6s forwards; }
+
+  /* Nouvelles animations colorées */
+  .color-shift {
+    animation: color-shift 8s infinite alternate;
+  }
+
+  .pulse-grow {
+    animation: pulse-grow 4s infinite alternate;
+  }
+
+  .rotate-slow {
+    animation: rotate 30s linear infinite;
+  }
+
+  .rotate-medium {
+    animation: rotate 20s linear infinite;
+  }
+
+  .rotate-fast {
+    animation: rotate 10s linear infinite;
+  }
+
+  .bounce-soft {
+    animation: bounce-soft 3s ease infinite;
+  }
+
+  .wavy {
+    animation: wavy 8s ease-in-out infinite;
+  }
+
+  /* Styles pour le bouton glow */
+  .glow-button {
+    @apply relative overflow-hidden;
+  }
+
+  .glow-button::after {
+    content: '';
+    @apply absolute inset-0 rounded-full opacity-0 transition-opacity duration-500 bg-gradient-to-r from-bazaart-pink via-bazaart-salmon to-bazaart-blue;
+    z-index: -1;
+  }
+
+  .glow-button:hover::after {
+    @apply opacity-70;
+  }
 }
 
 @keyframes float {
@@ -155,5 +204,59 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes color-shift {
+  0% {
+    background-color: rgba(255, 173, 173, 0.3);
+  }
+  25% {
+    background-color: rgba(173, 216, 255, 0.3);
+  }
+  50% {
+    background-color: rgba(173, 255, 189, 0.3);
+  }
+  75% {
+    background-color: rgba(255, 214, 173, 0.3);
+  }
+  100% {
+    background-color: rgba(220, 173, 255, 0.3);
+  }
+}
+
+@keyframes pulse-grow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce-soft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes wavy {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
   }
 }

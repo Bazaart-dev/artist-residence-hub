@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { ArrowRight, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,10 +27,17 @@ const Navigation = () => {
   };
 
   const scrollToContact = () => {
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
+    // Si on est sur la page d'accueil, on scrolle vers la section contact
+    if (location.pathname === '/') {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Sinon on navigue vers la page contact
+      window.location.href = '/contact';
     }
+    
     if (isMenuOpen) {
       setIsMenuOpen(false);
     }
@@ -53,13 +61,13 @@ const Navigation = () => {
             <Link to="/presentation" className="nav-item">Présentation</Link>
             <Link to="/projets" className="nav-item">Projets</Link>
             <Link to="/evenements" className="nav-item">Événements</Link>
-            <Link to="#" onClick={scrollToContact} className="nav-item">Contact</Link>
+            <Link to="/contact" className="nav-item">Contact</Link>
           </nav>
 
           <div className="hidden md:block">
             <Button 
               className="rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center gap-2"
-              onClick={scrollToContact}
+              onClick={() => window.location.href = '/contact'}
             >
               Nous rejoindre <ArrowRight size={16} />
             </Button>
@@ -83,11 +91,11 @@ const Navigation = () => {
           <Link to="/presentation" className="text-2xl font-medium" onClick={toggleMenu}>Présentation</Link>
           <Link to="/projets" className="text-2xl font-medium" onClick={toggleMenu}>Projets</Link>
           <Link to="/evenements" className="text-2xl font-medium" onClick={toggleMenu}>Événements</Link>
-          <Link to="#" onClick={scrollToContact} className="text-2xl font-medium">Contact</Link>
+          <Link to="/contact" className="text-2xl font-medium" onClick={toggleMenu}>Contact</Link>
           
           <Button 
             className="mt-8 rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center justify-center gap-2"
-            onClick={scrollToContact}
+            onClick={() => window.location.href = '/contact'}
           >
             Nous rejoindre <ArrowRight size={16} />
           </Button>
