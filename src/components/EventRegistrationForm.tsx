@@ -45,10 +45,12 @@ const formSchema = z.object({
   specialRequests: z.string().optional(),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 const EventRegistrationForm = ({ event, onClose }: EventRegistrationFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -59,7 +61,7 @@ const EventRegistrationForm = ({ event, onClose }: EventRegistrationFormProps) =
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: FormValues) => {
     setIsSubmitting(true);
     
     // Simuler un envoi

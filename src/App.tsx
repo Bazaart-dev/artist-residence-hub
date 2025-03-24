@@ -10,6 +10,7 @@ import Projets from "./pages/Projets";
 import Evenements from "./pages/Evenements";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
 import React from "react";
 
 // Create a client outside of the component
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/projets" element={<Projets />} />
             <Route path="/evenements" element={<Evenements />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

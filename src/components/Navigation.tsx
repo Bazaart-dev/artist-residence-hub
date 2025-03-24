@@ -22,6 +22,11 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Scroll to top when location changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -61,7 +66,6 @@ const Navigation = () => {
             <Link to="/presentation" className="nav-item">Présentation</Link>
             <Link to="/projets" className="nav-item">Projets</Link>
             <Link to="/evenements" className="nav-item">Événements</Link>
-            <Link to="/contact" className="nav-item">Contact</Link>
           </nav>
 
           <div className="hidden md:block">
@@ -91,7 +95,6 @@ const Navigation = () => {
           <Link to="/presentation" className="text-2xl font-medium" onClick={toggleMenu}>Présentation</Link>
           <Link to="/projets" className="text-2xl font-medium" onClick={toggleMenu}>Projets</Link>
           <Link to="/evenements" className="text-2xl font-medium" onClick={toggleMenu}>Événements</Link>
-          <Link to="/contact" className="text-2xl font-medium" onClick={toggleMenu}>Contact</Link>
           
           <Button 
             className="mt-8 rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center justify-center gap-2"

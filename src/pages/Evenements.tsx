@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, ArrowRight, Ticket } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import EventRegistrationForm from '@/components/EventRegistrationForm';
+import TicketPurchaseForm from '@/components/TicketPurchaseForm';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -118,6 +118,7 @@ const Evenements = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [showTicketForm, setShowTicketForm] = useState(false);
   const [registrationEvent, setRegistrationEvent] = useState<Event | null>(null);
   
   useEffect(() => {
@@ -135,6 +136,11 @@ const Evenements = () => {
   const handleRegister = (event: Event) => {
     setRegistrationEvent(event);
     setShowRegistrationForm(true);
+  };
+
+  const handleBuyTicket = (event: Event) => {
+    setRegistrationEvent(event);
+    setShowTicketForm(true);
   };
 
   const containerVariants = {
@@ -202,13 +208,15 @@ const Evenements = () => {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-4">Nos Événements</h1>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-4 animate-text-shimmer bg-clip-text text-transparent bg-[linear-gradient(to_right,theme(colors.bazaart-black),theme(colors.bazaart-pink),theme(colors.bazaart-black))] bg-[length:200%_auto]">
+            Nos Événements
+          </h1>
           <p className="text-lg md:text-xl max-w-3xl mx-auto">Découvrez notre programmation variée d'ateliers, expositions, performances et rencontres artistiques.</p>
         </motion.div>
 
         <div className="flex flex-col md:flex-row gap-8 mb-12">
           <div className="md:w-1/4 lg:w-1/5">
-            <div className="glass-card p-6 sticky top-24">
+            <div className="glass-card p-6 sticky top-24 animate-hover-float">
               <h2 className="text-2xl font-display font-bold mb-4">Filtres</h2>
               
               <div className="mb-6">
@@ -216,7 +224,7 @@ const Evenements = () => {
                 <input
                   type="text"
                   id="search"
-                  className="w-full p-2 border border-gray-200 rounded-md bg-white/50"
+                  className="w-full p-2 border border-gray-200 rounded-md bg-white/50 transition-all focus:ring-2 focus:ring-bazaart-pink focus:border-transparent"
                   placeholder="Titre, lieu, description..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -227,31 +235,31 @@ const Evenements = () => {
                 <h3 className="mb-2 font-medium">Catégories</h3>
                 <div className="space-y-2">
                   <button 
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${selectedCategory === 'all' ? 'bg-bazaart-pink text-bazaart-black' : 'hover:bg-bazaart-pink/20'}`}
+                    className={`w-full text-left px-3 py-2 rounded-md transition-all duration-300 ${selectedCategory === 'all' ? 'bg-bazaart-pink text-bazaart-black translate-x-1' : 'hover:bg-bazaart-pink/20 hover:translate-x-1'}`}
                     onClick={() => setSelectedCategory('all')}
                   >
                     Tous les événements
                   </button>
                   <button 
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${selectedCategory === 'atelier' ? 'bg-bazaart-pink text-bazaart-black' : 'hover:bg-bazaart-pink/20'}`}
+                    className={`w-full text-left px-3 py-2 rounded-md transition-all duration-300 ${selectedCategory === 'atelier' ? 'bg-bazaart-pink text-bazaart-black translate-x-1' : 'hover:bg-bazaart-pink/20 hover:translate-x-1'}`}
                     onClick={() => setSelectedCategory('atelier')}
                   >
                     Ateliers
                   </button>
                   <button 
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${selectedCategory === 'exposition' ? 'bg-bazaart-pink text-bazaart-black' : 'hover:bg-bazaart-pink/20'}`}
+                    className={`w-full text-left px-3 py-2 rounded-md transition-all duration-300 ${selectedCategory === 'exposition' ? 'bg-bazaart-pink text-bazaart-black translate-x-1' : 'hover:bg-bazaart-pink/20 hover:translate-x-1'}`}
                     onClick={() => setSelectedCategory('exposition')}
                   >
                     Expositions
                   </button>
                   <button 
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${selectedCategory === 'performance' ? 'bg-bazaart-pink text-bazaart-black' : 'hover:bg-bazaart-pink/20'}`}
+                    className={`w-full text-left px-3 py-2 rounded-md transition-all duration-300 ${selectedCategory === 'performance' ? 'bg-bazaart-pink text-bazaart-black translate-x-1' : 'hover:bg-bazaart-pink/20 hover:translate-x-1'}`}
                     onClick={() => setSelectedCategory('performance')}
                   >
                     Performances
                   </button>
                   <button 
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${selectedCategory === 'autre' ? 'bg-bazaart-pink text-bazaart-black' : 'hover:bg-bazaart-pink/20'}`}
+                    className={`w-full text-left px-3 py-2 rounded-md transition-all duration-300 ${selectedCategory === 'autre' ? 'bg-bazaart-pink text-bazaart-black translate-x-1' : 'hover:bg-bazaart-pink/20 hover:translate-x-1'}`}
                     onClick={() => setSelectedCategory('autre')}
                   >
                     Autres événements
@@ -279,11 +287,16 @@ const Evenements = () => {
                     key={event.id}
                     variants={itemVariants}
                     className="glass-card overflow-hidden card-hover"
+                    whileHover={{ y: -10, transition: { duration: 0.3 } }}
                   >
                     <div 
-                      className="h-48 bg-cover bg-center" 
+                      className="h-48 bg-cover bg-center relative group overflow-hidden" 
                       style={{ backgroundImage: `url(${event.image})` }}
-                    ></div>
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <h3 className="text-white text-lg font-semibold translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{event.title}</h3>
+                      </div>
+                    </div>
                     <div className="p-6">
                       <div className="mb-3">
                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
@@ -317,7 +330,7 @@ const Evenements = () => {
                           <span className="text-sm">{event.capacity}</span>
                         </div>
                       </div>
-                      <div className="flex justify-between items-center">
+                      <div className="grid grid-cols-2 gap-2">
                         <Button 
                           variant="outline" 
                           className="bg-white/50"
@@ -326,10 +339,16 @@ const Evenements = () => {
                           Détails
                         </Button>
                         <Button 
-                          className="bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center gap-1"
+                          className="bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center justify-center gap-1"
                           onClick={() => handleRegister(event)}
                         >
                           S'inscrire <ArrowRight size={16} />
+                        </Button>
+                        <Button 
+                          className="col-span-2 bg-bazaart-black text-white hover:bg-gray-800 flex items-center justify-center gap-1"
+                          onClick={() => handleBuyTicket(event)}
+                        >
+                          <Ticket size={16} className="animate-pulse" /> Acheter des billets
                         </Button>
                       </div>
                     </div>
@@ -423,15 +442,24 @@ const Evenements = () => {
               </ScrollArea>
             </div>
             
-            <div className="p-6 border-t">
+            <div className="p-6 border-t grid grid-cols-2 gap-3">
               <Button 
-                className="w-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center justify-center gap-2"
+                className="bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center justify-center gap-2"
                 onClick={() => {
                   handleRegister(selectedEvent);
                   setSelectedEvent(null);
                 }}
               >
-                S'inscrire à cet événement <ArrowRight size={16} />
+                S'inscrire <ArrowRight size={16} />
+              </Button>
+              <Button 
+                className="bg-bazaart-black text-white hover:bg-gray-800 flex items-center justify-center gap-2"
+                onClick={() => {
+                  handleBuyTicket(selectedEvent);
+                  setSelectedEvent(null);
+                }}
+              >
+                <Ticket size={16} /> Acheter des billets
               </Button>
             </div>
           </motion.div>
@@ -442,6 +470,13 @@ const Evenements = () => {
         <EventRegistrationForm 
           event={registrationEvent} 
           onClose={() => setShowRegistrationForm(false)} 
+        />
+      )}
+
+      {showTicketForm && registrationEvent && (
+        <TicketPurchaseForm 
+          event={registrationEvent} 
+          onClose={() => setShowTicketForm(false)} 
         />
       )}
 
@@ -457,6 +492,24 @@ const Evenements = () => {
           .bubble {
             animation: float 15s ease-in-out infinite alternate;
             border-radius: 50%;
+          }
+          
+          @keyframes text-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: 0 0; }
+          }
+          
+          .animate-text-shimmer {
+            animation: text-shimmer 4s linear infinite;
+          }
+          
+          @keyframes hover-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+          }
+          
+          .animate-hover-float {
+            animation: hover-float 6s ease-in-out infinite;
           }
         `}
       </style>

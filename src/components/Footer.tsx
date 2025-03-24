@@ -1,5 +1,6 @@
+
 import { Link } from 'react-router-dom';
-import { Instagram, Twitter, Facebook, Youtube, ArrowUp } from 'lucide-react';
+import { Instagram, Twitter, Facebook, Youtube, ArrowUp, Shield } from 'lucide-react';
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -80,6 +81,12 @@ const Footer = () => {
               <li>
                 <Link to="/contact" className="text-gray-300 hover:text-white transition-colors duration-300">
                   Contact
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin" className="text-bazaart-pink hover:text-bazaart-salmon flex items-center gap-2 transition-colors duration-300">
+                  <Shield size={16} />
+                  Administration
                 </Link>
               </li>
             </ul>
