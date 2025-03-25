@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -34,11 +35,15 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-wrap gap-4">
-              <Button className="rounded-full bg-bazaart-black text-white hover:bg-gray-800 px-8 py-6 text-lg flex items-center gap-2">
-                Découvrir <ArrowRight size={20} />
+              <Button className="rounded-full bg-bazaart-black text-white hover:bg-gray-800 px-8 py-6 text-lg flex items-center gap-2" asChild>
+                <Link to="/presentation">
+                  Découvrir <ArrowRight size={20} />
+                </Link>
               </Button>
-              <Button variant="outline" className="rounded-full border-bazaart-black text-bazaart-black hover:bg-bazaart-black hover:text-white px-8 py-6 text-lg">
-                Nos projets
+              <Button variant="outline" className="rounded-full border-bazaart-black text-bazaart-black hover:bg-bazaart-black hover:text-white px-8 py-6 text-lg" asChild>
+                <Link to="/projets">
+                  Nos projets
+                </Link>
               </Button>
             </div>
           </div>
@@ -63,11 +68,7 @@ const Hero = () => {
         </div>
       </div>
       
-      <div className="absolute bottom-10 left-0 right-0 flex justify-center animate-bounce">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-bazaart-black">
-          <ArrowRight size={20} className="rotate-90" />
-        </div>
-      </div>
+      {/* Middle arrow removed as requested */}
     </section>
   );
 };
