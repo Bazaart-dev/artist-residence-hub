@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -32,6 +31,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 // Admin roles
 const adminRoles = [
@@ -40,50 +40,72 @@ const adminRoles = [
   { value: "viewer", label: "Visualiseur" },
 ];
 
-// Mock admin users
-const adminUsers = [
-  { username: "admin", password: "admin123", role: "admin" },
-  { username: "editor", password: "editor123", role: "editor" },
-  { username: "viewer", password: "viewer123", role: "viewer" },
-];
-
 const formSchema = z.object({
-  username: z.string().min(3, { message: "Le nom d'utilisateur doit contenir au moins 3 caractères" }),
-  password: z.string().min(5, { message: "Le mot de passe doit contenir au moins 5 caractères" }),
+  email: z.string().email({ message: "Veuillez entrer une adresse email valide" }),
+  password: z.string().min(6, { message: "Le mot de passe doit contenir au moins 6 caractères" }),
   role: z.string().optional(),
 });
 
 type AdminLoginProps = {
-  onLogin: (user: { username: string; role: string }) => void;
+  onLogin: (user: { email: string; role: string }) => void;
 };
 
 const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const supabase = createClientComponentClient();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
       role: "admin",
     },
   });
 
-  const handleLogin = (values: z.infer<typeof formSchema>) => {
-    // Check admin credentials
-    const user = adminUsers.find(
-      user => user.username === values.username && user.password === values.password
-    );
-
-    if (user) {
-      toast.success("Connexion réussie", {
-        description: `Bienvenue, ${user.username} !`,
+  const handleLogin = async (values: z.infer<typeof formSchema>) => {
+    try {
+      // Connexion avec Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
       });
-      onLogin({ username: user.username, role: user.role });
+
+      if (error) {
+        throw error;
+      }
+
+      // Vérifier si l'utilisateur a le bon rôle (vous devrez adapter cette partie)
+      // Vous pouvez stocker le rôle dans la table 'profiles' ou utiliser les claims JWT
+      const { data: userData, error: userError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user?.id)
+        .single();
+
+      if (userError || !userData) {
+        throw new Error("Impossible de récupérer les informations de l'utilisateur");
+      }
+
+      // Vérifier que le rôle correspond au rôle sélectionné
+      if (userData.role !== values.role) {
+        await supabase.auth.signOut();
+        throw new Error("Vous n'avez pas les permissions pour ce rôle");
+      }
+
+      toast.success("Connexion réussie", {
+        description: `Bienvenue !`,
+      });
+      
+      onLogin({ 
+        email: data.user?.email || values.email, 
+        role: userData.role 
+      });
+      
       setIsOpen(false);
-    } else {
+    } catch (error) {
       toast.error("Échec de la connexion", {
-        description: "Nom d'utilisateur ou mot de passe incorrect",
+        description: error instanceof Error ? error.message : "Une erreur est survenue",
       });
     }
   };
@@ -107,16 +129,17 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom d'utilisateur</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                       <Input 
                         className="pl-10" 
-                        placeholder="Entrez votre nom d'utilisateur" 
+                        type="email"
+                        placeholder="Entrez votre email" 
                         {...field} 
                       />
                     </div>
@@ -184,14 +207,6 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
             </Button>
           </form>
         </Form>
-        <div className="text-sm text-gray-500 pt-4">
-          <p>Comptes de test :</p>
-          <ul className="list-disc list-inside mt-1">
-            <li>admin / admin123 (Administrateur)</li>
-            <li>editor / editor123 (Éditeur)</li>
-            <li>viewer / viewer123 (Visualiseur)</li>
-          </ul>
-        </div>
       </DialogContent>
     </Dialog>
   );
