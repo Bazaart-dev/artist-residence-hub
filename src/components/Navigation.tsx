@@ -71,7 +71,7 @@ const Navigation = () => {
           <div className="hidden md:block">
             <Button 
               className="rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center gap-2"
-              onClick={() => window.location.href = '/contact'}
+              onClick={scrollToContact}
             >
               Nous rejoindre <ArrowRight size={16} />
             </Button>
@@ -98,7 +98,7 @@ const Navigation = () => {
           
           <Button 
             className="mt-8 rounded-full bg-bazaart-pink text-bazaart-black hover:bg-bazaart-salmon flex items-center justify-center gap-2"
-            onClick={() => window.location.href = '/contact'}
+            onClick={scrollToContact}
           >
             Nous rejoindre <ArrowRight size={16} />
           </Button>

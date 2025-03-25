@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Layout, 
   LayoutDashboard, 
@@ -25,15 +25,31 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSite } from '@/contexts/SiteContext';
+import { toast } from 'sonner';
 
-const Admin = () => {
+type AdminProps = {
+  user: {
+    username: string;
+    role: string;
+  };
+  onLogout: () => void;
+};
+
+const Admin = ({ user, onLogout }: AdminProps) => {
   const { data } = useSite();
   const [activeTab, setActiveTab] = useState<string>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
   
   useEffect(() => {
     document.title = "Bazaart - Administration";
   }, []);
+
+  const handleLogout = () => {
+    toast.success("Déconnexion réussie");
+    onLogout();
+    navigate('/');
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -110,8 +126,13 @@ const Admin = () => {
             </Link>
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-bazaart-salmon flex items-center justify-center text-white font-medium">A</div>
-              <span className="hidden sm:block font-medium">Admin</span>
+              <div className="w-8 h-8 rounded-full bg-bazaart-salmon flex items-center justify-center text-white font-medium">
+                {user?.username.charAt(0).toUpperCase() || 'A'}
+              </div>
+              <div className="hidden sm:block">
+                <p className="font-medium">{user?.username || 'Admin'}</p>
+                <p className="text-xs text-gray-500">{user?.role || 'admin'}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -180,10 +201,13 @@ const Admin = () => {
                 
                 <Separator className="my-4" />
                 
-                <Link to="/" onClick={scrollToTop} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-500 hover:bg-red-50 transition-colors">
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-500 hover:bg-red-50 transition-colors"
+                >
                   <LogOut size={18} />
                   <span>Déconnexion</span>
-                </Link>
+                </button>
               </nav>
             </motion.aside>
           )}
@@ -243,10 +267,13 @@ const Admin = () => {
             
             <Separator className="my-4" />
             
-            <Link to="/" onClick={scrollToTop} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-500 hover:bg-red-50 transition-colors">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-red-500 hover:bg-red-50 transition-colors"
+            >
               <LogOut size={18} />
               <span>Déconnexion</span>
-            </Link>
+            </button>
           </nav>
         </aside>
 

@@ -6,6 +6,7 @@ import About from '@/components/About';
 import Projects from '@/components/Projects';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import ScrollDownArrow from '@/components/ScrollDownArrow';
 
 const Index = () => {
   useEffect(() => {
@@ -15,6 +16,7 @@ const Index = () => {
   return (
     <div className="min-h-screen overflow-x-hidden">
       <Navigation />
+      <ScrollDownArrow />
       <Hero />
       <About />
       <Projects />

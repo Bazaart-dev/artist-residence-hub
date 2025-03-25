@@ -13,6 +13,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SettingsForm from './forms/SettingsForm';
 import { useSite, SiteSettings } from '@/contexts/SiteContext';
+import SecuritySettings from './SecuritySettings';
+import AppearanceSettings from './AppearanceSettings';
 
 const AdminSettings = () => {
   const { data, updateSettings } = useSite();
@@ -89,9 +91,7 @@ const AdminSettings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-10 text-gray-500">
-                Cette fonctionnalité sera disponible prochainement.
-              </div>
+              <AppearanceSettings />
             </CardContent>
           </Card>
         </TabsContent>
@@ -105,9 +105,7 @@ const AdminSettings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-10 text-gray-500">
-                Cette fonctionnalité sera disponible prochainement.
-              </div>
+              <SecuritySettings />
             </CardContent>
           </Card>
         </TabsContent>
