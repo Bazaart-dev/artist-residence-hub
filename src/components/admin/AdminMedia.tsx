@@ -87,16 +87,19 @@ const MediaDetails = ({ item, onDelete }: { item: MediaItem; onDelete: () => voi
           >
             <Eye size={16} className="mr-2" /> Voir
           </Button>
-          <Button 
-            variant="outline" 
-            className="flex-1"
-            as="a"
+          <a 
             href={item.url}
             download={item.name}
             target="_blank"
+            className="flex-1"
           >
-            <Download size={16} className="mr-2" /> Télécharger
-          </Button>
+            <Button 
+              variant="outline" 
+              className="w-full"
+            >
+              <Download size={16} className="mr-2" /> Télécharger
+            </Button>
+          </a>
         </div>
         
         <Button 
