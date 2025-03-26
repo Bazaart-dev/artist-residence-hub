@@ -1,13 +1,13 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { supabase } from '@/lib/supabaseClient';
+const ProtectedRoute = ({ children }) => {
+  const [verified, setVerified] = useState(false);
 
-export default function ProtectedRoute({ children }) {
-  const location = useLocation();
-  const session = supabase.auth.session();
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setVerified(!!session);
+    });
+  }, []);
 
-  if (!session) {
-    return <Navigate to="/" replace state={{ from: location }} />;
-  }
-
+  if (!verified) return <Navigate to="/" replace />;
+  
   return children;
-}
+};
