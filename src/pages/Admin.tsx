@@ -128,6 +128,7 @@ const Admin = ({ user, onLogout }: AdminProps) => {
             </div>
           </div>
           <div className="flex items-center gap-4">
+              <AdminLogin onLogin={onLogin} />
             <Link to="/" onClick={scrollToTop} className="text-sm flex items-center gap-1 hover:text-bazaart-pink transition-colors">
               <Home size={16} />
               <span className="hidden sm:inline">Retour au site</span>
