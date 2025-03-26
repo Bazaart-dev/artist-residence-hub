@@ -50,29 +50,20 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     }
   });
 
-  const handleLogin = async (values: z.infer<typeof formSchema>) => {
-    try {
-      console.log("Tentative de connexion avec:", values);
-      
-      // Appel à la fonction onLogin fournie par le parent
-      const user = await onLogin(values.email, values.password);
-      
-      if (user) {
-        toast.success("Connexion réussie", {
-          description: `Bienvenue ${user.email}`
-        });
-        setIsOpen(false);
-        form.reset();
-      } else {
-        throw new Error("Aucun utilisateur retourné");
-      }
-    } catch (error) {
-      console.error("Erreur de connexion:", error);
-      toast.error("Échec de la connexion", {
-        description: error instanceof Error ? error.message : "Erreur inconnue"
-      });
+const handleLogin = async (values: z.infer<typeof formSchema>) => {
+  try {
+    const user = await onLogin(values.email, values.password);
+    if (user) {
+      toast.success(`Bienvenue ${user.email}`);
+      setIsOpen(false);
+      window.location.reload(); // Force un re-check de l'authentification
     }
-  };
+  } catch (error) {
+    toast.error("Échec de connexion", {
+      description: error instanceof Error ? error.message : "Erreur inconnue"
+    });
+  }
+};
 
   const handleSignUp = async (values: z.infer<typeof formSchema>) => {
     try {
