@@ -146,7 +146,7 @@ function App() {
           <Route path="/presentation" element={<Presentation />} />
           <Route path="/projets" element={<Projets />} />
           <Route path="/evenements" element={<Evenements />} />
-          // Dans App.jsx, modifiez la route Admin pour passer handleLogin
+          //la route Admin pour passer handleLogin
 <Route 
   path="/admin/*" 
   element={
