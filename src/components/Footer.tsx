@@ -1,8 +1,12 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Linkedin, ArrowUp } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, ArrowUp, LogOut } from 'lucide-react';
 import { useSite } from '@/contexts/SiteContext';
 import AdminLogin from './admin/AdminLogin';
+import { Button } from "@/components/ui/button";
+import { toast } from 'sonner';
+import { supabase } from '@/lib/supabaseClient';
 
 const Footer = () => {
   const { data } = useSite();
@@ -11,12 +15,20 @@ const Footer = () => {
 
   // Check if user is already logged in
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [adminUser, setAdminUser] = useState<{ email: string; role: string } | null>(null);
 
   useEffect(() => {
     // Check localStorage for admin user
     const checkLoginStatus = () => {
       const storedUser = localStorage.getItem('bazaart-admin-user');
-      setIsLoggedIn(!!storedUser);
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        setIsLoggedIn(true);
+        setAdminUser(user);
+      } else {
+        setIsLoggedIn(false);
+        setAdminUser(null);
+      }
     };
 
     checkLoginStatus();
@@ -46,8 +58,32 @@ const Footer = () => {
     // Store in localStorage
     localStorage.setItem('bazaart-admin-user', JSON.stringify(user));
     setIsLoggedIn(true);
+    setAdminUser(user);
     window.dispatchEvent(new Event('storage'));
     window.location.href = '/admin';
+  };
+
+  const handleLogout = async () => {
+    // Remove from localStorage
+    localStorage.removeItem('bazaart-admin-user');
+    
+    // Sign out from Supabase if it's configured
+    if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      await supabase.auth.signOut();
+    }
+    
+    setIsLoggedIn(false);
+    setAdminUser(null);
+    window.dispatchEvent(new Event('storage'));
+    
+    toast.success("Déconnexion réussie", {
+      description: "Vous avez été déconnecté avec succès."
+    });
+    
+    // Redirect to home if on admin page
+    if (window.location.pathname.startsWith('/admin')) {
+      window.location.href = '/';
+    }
   };
 
   return (
@@ -121,10 +157,29 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-display font-bold mb-6">Administration</h3>
             <div className="space-y-3">
-              {isLoggedIn ? (
-                <Link to="/admin" className="inline-block hover:text-bazaart-pink transition-colors">
-                  Tableau de bord
-                </Link>
+              {isLoggedIn && adminUser ? (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-400">
+                    Connecté en tant que: <span className="text-white">{adminUser.email}</span>
+                    <br />
+                    Rôle: <span className="text-white capitalize">{adminUser.role}</span>
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <Link to="/admin">
+                      <Button variant="outline" className="w-full justify-start">
+                        Tableau de bord
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start text-red-400 hover:text-red-300 hover:border-red-400"
+                      onClick={handleLogout}
+                    >
+                      <LogOut size={16} className="mr-2" />
+                      Se déconnecter
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 <AdminLogin onLogin={handleLogin} />
               )}
