@@ -74,7 +74,7 @@ const [loading, setLoading] = useState(true);
     toast.success('Déconnexion réussie');
   };
 
-  r return (
+  return (
     <SiteProvider>
       <Router>
         <Routes>
