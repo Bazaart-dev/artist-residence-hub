@@ -146,16 +146,21 @@ function App() {
           <Route path="/presentation" element={<Presentation />} />
           <Route path="/projets" element={<Projets />} />
           <Route path="/evenements" element={<Evenements />} />
-          <Route 
-            path="/admin/*" 
-            element={
-              authUser ? (
-                <Admin user={authUser} onLogout={handleLogout} />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            } 
-          />
+          // Dans App.jsx, modifiez la route Admin pour passer handleLogin
+<Route 
+  path="/admin/*" 
+  element={
+    authUser ? (
+      <Admin 
+        user={authUser} 
+        onLogout={handleLogout}
+        onLogin={handleLogin} // Ajoutez cette ligne
+      />
+    ) : (
+      <Navigate to="/" replace />
+    )
+  } 
+/>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
