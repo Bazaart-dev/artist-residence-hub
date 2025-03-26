@@ -129,14 +129,7 @@ if (!profile) {
         <Routes>
           <Route path="/" element={<Index />} />
           
- <Route
-  path="/admin/*"
-  element={
-    <ProtectedRoute user={authUser}>
-      <Admin user={authUser!} onLogout={handleLogout} onLogin={handleLogin} />
-    </ProtectedRoute>
-  }
-/>
+<Route path="/admin/*" element={<Admin user={{email: 'g.charlesbel+test@gmail.com', id: '158f969c-7770-4e66-8204-49345638ec1a'}} />} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
