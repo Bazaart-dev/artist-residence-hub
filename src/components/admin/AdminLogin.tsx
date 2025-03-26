@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Lock, User, LogIn, UserPlus } from 'lucide-react';
@@ -68,66 +67,65 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 const handleLogin = async (values: z.infer<typeof formSchema>) => {
     // les logs de débogage
     console.log("Tentative de connexion lancée"); // Debug 1
-  console.log("Tentative de connexion avec:", values);
-  console.log("Rôle sélectionné:", values.role);
-  try 
+    console.log("Tentative de connexion avec:", values);
+    console.log("Rôle sélectionné:", values.role);
+    try {
       console.log("Avant appel Supabase", values); // Debug 2
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password
-    });
-    console.log("Réponse Supabase", { data, error }); // Debug 3
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password
+      });
+      console.log("Réponse Supabase", { data, error }); // Debug 3
 
-    if (error) {
-      console.error("Erreur Supabase", error); // Debug 4
-      throw error;
-          }
+      if (error) {
+        console.error("Erreur Supabase", error); // Debug 4
+        throw error;
+      }
 
-    if (!data.user) {
-      throw new Error("Aucun utilisateur retourné");
-    }
-          console.log("Récupération du profil..."); // Debug 5
+      if (!data.user) {
+        throw new Error("Aucun utilisateur retourné");
+      }
+      console.log("Récupération du profil..."); // Debug 5
 
-    // Récupération du rôle
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', data.user?.id)
-      .single();
-    console.log("Profil récupéré", { profile, profileError }); // Debug 6
+      // Récupération du rôle
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user?.id)
+        .single();
+      console.log("Profil récupéré", { profile, profileError }); // Debug 6
 
-    if (!profile) throw new Error("Profil utilisateur introuvable");
-    console.log("Vérification du rôle..."); // Debug 7
+      if (!profile) throw new Error("Profil utilisateur introuvable");
+      console.log("Vérification du rôle..."); // Debug 7
 
-    // Vérification du rôle
-    if (profile.role !== values.role) {
-      await supabase.auth.signOut();
-      throw new Error(`Vous n'avez pas les permissions de ${values.role}`);
-    }
+      // Vérification du rôle
+      if (profile.role !== values.role) {
+        await supabase.auth.signOut();
+        throw new Error(`Vous n'avez pas les permissions de ${values.role}`);
+      }
       console.log("Connexion réussie, appel onLogin"); // Debug 8
 
+      toast.success("Connexion réussie", {
+        description: `Bienvenue ${data.user?.email}`
+      });
 
-    toast.success("Connexion réussie", {
-      description: `Bienvenue ${data.user?.email}`
-    });
+      // Appel de la callback parent
+      onLogin({
+        email: data.user?.email || values.email,
+        role: profile.role
+      });
 
-    // Appel de la callback parent
-    onLogin({
-      email: data.user?.email || values.email,
-      role: profile.role
-    });
-
-    // Fermeture du modal
+      // Fermeture du modal
       console.log("Fermeture du modal"); // Debug 9
-    setIsOpen(false);
+      setIsOpen(false);
 
-  } catch (error) {
-    console.error("Erreur de connexion:", error);
-    toast.error("Échec de la connexion", {
-      description: error instanceof Error ? error.message : "Erreur inconnue"
-    });
-  }
+    } catch (error) {
+      console.error("Erreur de connexion:", error);
+      toast.error("Échec de la connexion", {
+        description: error instanceof Error ? error.message : "Erreur inconnue"
+      });
+    }
 };
 
 const handleSignUp = async (values: z.infer<typeof formSchema>) => {
@@ -333,3 +331,4 @@ const handleSignUp = async (values: z.infer<typeof formSchema>) => {
 };
 
 export default AdminLogin;
+
