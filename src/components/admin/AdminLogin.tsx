@@ -51,20 +51,20 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     }
   });
 
-const handleLogin = async (values: z.infer<typeof formSchema>) => {
-  try {
-    const user = await onLogin(values.email, values.password);
-    if (user) {
-      toast.success(`Bienvenue ${user.email}`);
-      setIsOpen(false);
-      window.location.reload(); // Force un re-check de l'authentification
+  const handleLogin = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const user = await onLogin(values.email, values.password);
+      if (user) {
+        toast.success(`Bienvenue ${user.email}`);
+        setIsOpen(false);
+        window.location.reload(); // Force un re-check de l'authentification
+      }
+    } catch (error) {
+      toast.error("Échec de connexion", {
+        description: error instanceof Error ? error.message : "Erreur inconnue"
+      });
     }
-  } catch (error) {
-    toast.error("Échec de connexion", {
-      description: error instanceof Error ? error.message : "Erreur inconnue"
-    });
-  }
-};
+  };
 
   const handleSignUp = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -176,6 +176,65 @@ const handleLogin = async (values: z.infer<typeof formSchema>) => {
             <Form {...signUpForm}>
               <form onSubmit={signUpForm.handleSubmit(handleSignUp)} className="space-y-4">
                 {/* Formulaire d'inscription similaire à celui de connexion */}
+                <FormField
+                  control={signUpForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                          <Input className="pl-10" type="email" placeholder="admin@exemple.com" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={signUpForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mot de passe</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                          <Input className="pl-10" type="password" placeholder="••••••••" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={signUpForm.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rôle</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sélectionnez un rôle" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {adminRoles.map((role) => (
+                            <SelectItem key={role.value} value={role.value}>
+                              {role.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
                 <Button type="submit" className="w-full">
                   <UserPlus size={16} className="mr-2" />
                   S'inscrire

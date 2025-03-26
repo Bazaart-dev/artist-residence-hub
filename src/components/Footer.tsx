@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Linkedin, ArrowUp, LogOut } from 'lucide-react';
@@ -54,13 +53,40 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLogin = (user: { email: string; role: string }) => {
-    // Store in localStorage
-    localStorage.setItem('bazaart-admin-user', JSON.stringify(user));
-    setIsLoggedIn(true);
-    setAdminUser(user);
-    window.dispatchEvent(new Event('storage'));
-    window.location.href = '/admin';
+  // Update handleLogin to match the expected signature
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      // Supabase authentication call would go here in a real implementation
+      // For now, we'll simulate a login response
+      const response = await fetch('/api/login', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      }).catch(() => {
+        // This is just a mock - in reality we would call the Supabase function
+        // as defined in App.tsx
+        const user = { 
+          email, 
+          role: email.includes('admin') ? 'admin' : 'viewer' 
+        };
+        
+        // Store in localStorage
+        localStorage.setItem('bazaart-admin-user', JSON.stringify(user));
+        setIsLoggedIn(true);
+        setAdminUser(user);
+        window.dispatchEvent(new Event('storage'));
+        window.location.href = '/admin';
+        
+        return { ok: true, json: () => Promise.resolve(user) };
+      });
+      
+      const user = await response.json();
+      return user;
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Échec de connexion");
+      throw error;
+    }
   };
 
   const handleLogout = async () => {
