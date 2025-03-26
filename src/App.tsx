@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -68,15 +69,15 @@ function App() {
 
   //SECTION LOADING
   if (loading) {
-  return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="flex flex-col items-center gap-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-bazaart-pink"></div>
-        <p>Chargement de l'application...</p>
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-bazaart-pink"></div>
+          <p>Chargement de l'application...</p>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   const handleLogin = async (email: string, password: string) => {
     try {
@@ -95,10 +96,10 @@ function App() {
         .eq('id', data.user.id)
         .single();
 
-if (!profile) {
-  await supabase.auth.signOut();
-  throw new Error("Profil utilisateur non trouvé");
-}
+      if (!profile) {
+        await supabase.auth.signOut();
+        throw new Error("Profil utilisateur non trouvé");
+      }
 
       return {
         email: data.user.email || email,
@@ -119,22 +120,25 @@ if (!profile) {
     toast.success('Déconnexion réussie');
   };
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-screen">Chargement...</div>;
-  }
-
   return (
     <SiteProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Index />} />
           
-<Route
-  path="/admin/*"
-  element={
-    <ProtectedRoute>
-      <Admin user={authUser} onLogout={handleLogout} onLogin={handleLogin} />
-    </ProtectedRoute>
-  }
-/>
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute>
+                <Admin user={authUser} onLogout={handleLogout} onLogin={handleLogin} />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+        <Toaster />
+      </Router>
+    </SiteProvider>
+  );
+}
+
 export default App;
