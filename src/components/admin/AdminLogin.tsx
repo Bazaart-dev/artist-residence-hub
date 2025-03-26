@@ -66,6 +66,9 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   });
 
 const handleLogin = async (values: z.infer<typeof formSchema>) => {
+    // les logs de débogage
+  console.log("Tentative de connexion avec:", values);
+  console.log("Rôle sélectionné:", values.role);
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: values.email,
