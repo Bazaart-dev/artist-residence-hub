@@ -67,30 +67,46 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 
 const handleLogin = async (values: z.infer<typeof formSchema>) => {
     // les logs de débogage
+    console.log("Tentative de connexion lancée"); // Debug 1
   console.log("Tentative de connexion avec:", values);
   console.log("Rôle sélectionné:", values.role);
-  try {
+  try 
+      console.log("Avant appel Supabase", values); // Debug 2
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: values.email,
       password: values.password
     });
+    console.log("Réponse Supabase", { data, error }); // Debug 3
 
-    if (error) throw error;
+    if (error) {
+      console.error("Erreur Supabase", error); // Debug 4
+      throw error;
+          }
+
+    if (!data.user) {
+      throw new Error("Aucun utilisateur retourné");
+    }
+          console.log("Récupération du profil..."); // Debug 5
 
     // Récupération du rôle
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', data.user?.id)
       .single();
+    console.log("Profil récupéré", { profile, profileError }); // Debug 6
 
     if (!profile) throw new Error("Profil utilisateur introuvable");
+    console.log("Vérification du rôle..."); // Debug 7
 
     // Vérification du rôle
     if (profile.role !== values.role) {
       await supabase.auth.signOut();
       throw new Error(`Vous n'avez pas les permissions de ${values.role}`);
     }
+      console.log("Connexion réussie, appel onLogin"); // Debug 8
+
 
     toast.success("Connexion réussie", {
       description: `Bienvenue ${data.user?.email}`
@@ -103,6 +119,7 @@ const handleLogin = async (values: z.infer<typeof formSchema>) => {
     });
 
     // Fermeture du modal
+      console.log("Fermeture du modal"); // Debug 9
     setIsOpen(false);
 
   } catch (error) {
