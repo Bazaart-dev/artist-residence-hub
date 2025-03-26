@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -11,7 +12,7 @@ import NotFound from './pages/NotFound';
 import { Toaster } from '@/components/ui/sonner';
 import { supabase } from './lib/supabaseClient';
 import { toast } from 'sonner';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const [authUser, setAuthUser] = useState<{ email: string; role: string } | null>(null);
@@ -75,10 +76,15 @@ function App() {
           .eq('id', data.user.id)
           .single();
 
-        return {
+        const user = {
           email: data.user.email || email,
           role: profile?.role || 'viewer'
         };
+        
+        // Met à jour l'état authUser directement après une connexion réussie
+        setAuthUser(user);
+        
+        return user;
       }
       return null;
     } catch (error) {
