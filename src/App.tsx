@@ -20,6 +20,9 @@ function App() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      console.log('Session:', session);
+console.log('Profile:', profile);
+console.log('Auth User:', authUser);
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -116,14 +119,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           
-          <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute user={authUser}>
-                <Admin user={authUser!} onLogout={handleLogout} onLogin={handleLogin} />
-              </ProtectedRoute>
-            }
-          />
+ <Route
+  path="/admin/*"
+  element={
+    <ProtectedRoute user={authUser}>
+      <Admin user={authUser!} onLogout={handleLogout} onLogin={handleLogin} />
+    </ProtectedRoute>
+  }
+/>
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
