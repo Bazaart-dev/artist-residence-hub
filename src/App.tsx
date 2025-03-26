@@ -19,10 +19,19 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+      const authTimeout = setTimeout(() => {
+    if (loading) {
+      console.warn("Auth check taking too long, forcing load");
+      setLoading(false);
+    }
+  }, 10000); // 10 secondes timeout
+    
     const checkAuth = async () => {
       console.log('Session:', session);
 console.log('Profile:', profile);
 console.log('Auth User:', authUser);
+      
         setLoading(true); // Réinitialise le chargement à true au début
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
@@ -68,6 +77,8 @@ console.log('Auth User:', authUser);
 
     return () => subscription.unsubscribe();
   }, []);
+
+  //SECTION LOADING
   if (loading) {
   return (
     <div className="flex justify-center items-center h-screen">
