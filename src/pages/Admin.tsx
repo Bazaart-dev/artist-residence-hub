@@ -29,7 +29,7 @@ import { toast } from 'sonner';
 
 type AdminProps = {
   user: {
-    username: string;
+    email: string;
     role: string;
   };
   onLogout: () => void;
@@ -102,6 +102,11 @@ const Admin = ({ user, onLogout }: AdminProps) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Display first character of email for avatar
+  const getInitial = () => {
+    return user?.email ? user.email.charAt(0).toUpperCase() : 'A';
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
@@ -127,10 +132,10 @@ const Admin = ({ user, onLogout }: AdminProps) => {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-bazaart-salmon flex items-center justify-center text-white font-medium">
-                {user?.username.charAt(0).toUpperCase() || 'A'}
+                {getInitial()}
               </div>
               <div className="hidden sm:block">
-                <p className="font-medium">{user?.username || 'Admin'}</p>
+                <p className="font-medium">{user?.email || 'Admin'}</p>
                 <p className="text-xs text-gray-500">{user?.role || 'admin'}</p>
               </div>
             </div>

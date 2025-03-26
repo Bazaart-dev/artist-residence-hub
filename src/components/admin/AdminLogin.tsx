@@ -51,15 +51,27 @@ type AdminLoginProps = {
   onLogin: (user: { email: string; role: string }) => void;
 };
 
+// Create a mock login function for development without Supabase
+const mockLogin = (email: string, password: string, role: string) => {
+  // In a real app, you would validate against your backend
+  if (email === "admin@bazaart.fr" && password === "admin123") {
+    return { success: true, user: { email, role } };
+  }
+  throw new Error("Identifiants invalides");
+};
+
 const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   
-  // Initialize Supabase client
-  const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL || '',
-    import.meta.env.VITE_SUPABASE_ANON_KEY || ''
-  );
+  // Check if Supabase environment variables are available
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  
+  // Initialize Supabase client only if environment variables are available
+  const supabase = supabaseUrl && supabaseAnonKey 
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,42 +84,59 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 
   const handleLogin = async (values: z.infer<typeof formSchema>) => {
     try {
-      // Connexion avec Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
+      if (supabase) {
+        // Connexion avec Supabase si disponible
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: values.email,
+          password: values.password,
+        });
 
-      if (error) {
-        throw error;
+        if (error) {
+          throw error;
+        }
+
+        // Vérifier si l'utilisateur a le bon rôle
+        const { data: userData, error: userError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user?.id)
+          .single();
+
+        if (userError || !userData) {
+          throw new Error("Impossible de récupérer les informations de l'utilisateur");
+        }
+
+        // Vérifier que le rôle correspond au rôle sélectionné
+        if (userData.role !== values.role) {
+          await supabase.auth.signOut();
+          throw new Error("Vous n'avez pas les permissions pour ce rôle");
+        }
+
+        toast.success("Connexion réussie", {
+          description: `Bienvenue !`,
+        });
+        
+        onLogin({ 
+          email: data.user?.email || values.email, 
+          role: userData.role 
+        });
+      } else {
+        // Mode de développement sans Supabase
+        console.warn("Supabase n'est pas configuré. Utilisation du mode de développement.");
+        
+        const result = mockLogin(values.email, values.password, values.role || 'admin');
+        
+        if (result.success) {
+          toast.success("Connexion réussie (mode démo)", {
+            description: `Bienvenue ${values.email} !`,
+          });
+          
+          onLogin({
+            email: values.email,
+            role: values.role || 'admin',
+          });
+        }
       }
-
-      // Vérifier si l'utilisateur a le bon rôle (vous devrez adapter cette partie)
-      // Vous pouvez stocker le rôle dans la table 'profiles' ou utiliser les claims JWT
-      const { data: userData, error: userError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user?.id)
-        .single();
-
-      if (userError || !userData) {
-        throw new Error("Impossible de récupérer les informations de l'utilisateur");
-      }
-
-      // Vérifier que le rôle correspond au rôle sélectionné
-      if (userData.role !== values.role) {
-        await supabase.auth.signOut();
-        throw new Error("Vous n'avez pas les permissions pour ce rôle");
-      }
-
-      toast.success("Connexion réussie", {
-        description: `Bienvenue !`,
-      });
-      
-      onLogin({ 
-        email: data.user?.email || values.email, 
-        role: userData.role 
-      });
 
       // Redirection vers la page admin
       navigate('/admin');
