@@ -1,20 +1,18 @@
-
-import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { AdminRole } from '@/lib/constants';
+import { ALL_ADMIN_ROLES, type AdminRole } from '@/lib/constants';
 
-
-type ProtectedRouteProps = {
+interface ProtectedRouteProps {
   user: { role: AdminRole } | null;
-  allowedRoles: AdminRole[];
   children: React.ReactNode;
-};
+}
 
-const ProtectedRoute = ({ user, allowedRoles, children }: ProtectedRouteProps) => {
-  if (!user || !allowedRoles.includes(user.role)) {
+const ProtectedRoute = ({ user, children }: ProtectedRouteProps) => {
+  if (!user || !ALL_ADMIN_ROLES.includes(user.role)) {
+    toast.error('Accès non autorisé');
     return <Navigate to="/" replace />;
   }
   return children;
 };
+
 export default ProtectedRoute;
