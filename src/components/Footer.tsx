@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Linkedin, ArrowUp, LogOut } from 'lucide-react';
@@ -7,18 +6,17 @@ import AdminLogin from './admin/AdminLogin';
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
+import { type AdminRole } from '@/lib/constants';
 
 const Footer = () => {
   const { data } = useSite();
   const { socialLinks } = data.settings;
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Check if user is already logged in
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminUser, setAdminUser] = useState<{ email: string; role: string } | null>(null);
 
   useEffect(() => {
-    // Check localStorage for admin user
     const checkLoginStatus = () => {
       const storedUser = localStorage.getItem('bazaart-admin-user');
       if (storedUser) {
@@ -54,20 +52,50 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLogin = (user: { email: string; role: string }) => {
-    // Store in localStorage
-    localStorage.setItem('bazaart-admin-user', JSON.stringify(user));
-    setIsLoggedIn(true);
-    setAdminUser(user);
-    window.dispatchEvent(new Event('storage'));
-    window.location.href = '/admin';
+  const handleAdminLogin = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) throw error;
+      
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+        
+        const userInfo = {
+          email: data.user.email || email,
+          role: profile?.role as AdminRole
+        };
+        
+        localStorage.setItem('bazaart-admin-user', JSON.stringify(userInfo));
+        setIsLoggedIn(true);
+        setAdminUser(userInfo);
+        window.dispatchEvent(new Event('storage'));
+        
+        toast.success(`Bienvenue ${userInfo.email}`);
+        window.location.href = '/admin';
+        
+        return userInfo;
+      }
+      
+      return null;
+    } catch (error) {
+      toast.error("Échec de connexion", {
+        description: error instanceof Error ? error.message : "Erreur inconnue"
+      });
+      throw error;
+    }
   };
 
   const handleLogout = async () => {
-    // Remove from localStorage
     localStorage.removeItem('bazaart-admin-user');
     
-    // Sign out from Supabase if it's configured
     if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
       await supabase.auth.signOut();
     }
@@ -80,7 +108,6 @@ const Footer = () => {
       description: "Vous avez été déconnecté avec succès."
     });
     
-    // Redirect to home if on admin page
     if (window.location.pathname.startsWith('/admin')) {
       window.location.href = '/';
     }
@@ -181,7 +208,7 @@ const Footer = () => {
                   </div>
                 </div>
               ) : (
-                <AdminLogin onLogin={handleLogin} />
+                <AdminLogin onLogin={handleAdminLogin} />
               )}
             </div>
           </div>

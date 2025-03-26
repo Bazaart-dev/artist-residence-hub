@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -26,14 +27,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSite } from '@/contexts/SiteContext';
 import { toast } from 'sonner';
 import AdminLogin from '@/components/admin/AdminLogin';
+import { type AdminRole } from '@/lib/constants';
 
 type AdminProps = {
   user: {
     email: string;
-    role: string;
+    role: AdminRole;
+    id: string;
   };
   onLogout: () => void;
-onLogin: (email: string, password: string) => Promise<{ email: string; role: string } | null>; // Modifié ici
+  onLogin: (email: string, password: string) => Promise<{ email: string; role: AdminRole } | null>;
 };
 
 const Admin = ({ user, onLogout, onLogin }: AdminProps) => {

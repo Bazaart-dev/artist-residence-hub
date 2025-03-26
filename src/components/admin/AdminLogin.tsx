@@ -16,11 +16,10 @@ import { ADMIN_ROLES, type AdminRole } from '@/lib/constants';
 // Admin roles
 const roleOptions = Object.values(ADMIN_ROLES);
 
-
 const formSchema = z.object({
   email: z.string().email({ message: "Veuillez entrer une adresse email valide" }),
   password: z.string().min(6, { message: "Le mot de passe doit contenir au moins 6 caractères" }),
- role: z.custom<AdminRole>(val => Object.keys(ADMIN_ROLES).includes(val as string))
+  role: z.custom<AdminRole>(val => Object.keys(ADMIN_ROLES).includes(val as string))
 });
 
 type AdminLoginProps = {
@@ -28,7 +27,9 @@ type AdminLoginProps = {
 };
 
 const AdminLogin = ({ onLogin }: AdminLoginProps) => {
-  const [isOpen, setIsOpen] = useState(false);  
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,20 +48,20 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     }
   });
 
-const handleLogin = async (values: z.infer<typeof formSchema>) => {
-  try {
-    const user = await onLogin(values.email, values.password, values.role as AdminRole);
-    if (user) {
-      toast.success(`Bienvenue ${user.email} (${user.role})`);
-      setIsOpen(false);
-      window.location.reload(); // Force un re-check de l'authentification
+  const handleLogin = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const user = await onLogin(values.email, values.password);
+      if (user) {
+        toast.success(`Bienvenue ${user.email} (${user.role})`);
+        setIsOpen(false);
+        window.location.reload(); // Force un re-check de l'authentification
+      }
+    } catch (error) {
+      toast.error("Échec de connexion", {
+        description: error instanceof Error ? error.message : "Erreur inconnue"
+      });
     }
-  } catch (error) {
-    toast.error("Échec de connexion", {
-      description: error instanceof Error ? error.message : "Erreur inconnue"
-    });
-  }
-};
+  };
 
   const handleSignUp = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -147,13 +148,13 @@ const handleLogin = async (values: z.infer<typeof formSchema>) => {
                             <SelectValue placeholder="Sélectionnez un rôle" />
                           </SelectTrigger>
                         </FormControl>
-                   <SelectContent>
-  {Object.values(ADMIN_ROLES).map(role => (
-                      <SelectItem key={role.value} value={role.value}>
-                        {role.label}
-    </SelectItem>
-  ))}
-</SelectContent>
+                        <SelectContent>
+                          {Object.values(ADMIN_ROLES).map(role => (
+                            <SelectItem key={role.value} value={role.value}>
+                              {role.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SiteProvider } from './contexts/SiteContext';
 import { Toaster } from '@/components/ui/sonner';
 import { supabase } from './lib/supabaseClient';
 import { toast } from 'sonner';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 import Index from './pages/Index';
 import Admin from './pages/Admin';
 import { ADMIN_ROLES, ALL_ADMIN_ROLES, type AdminRole } from '@/lib/constants';
@@ -64,7 +65,7 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = async (email: string, password: string, role: AdminRole) => {
+  const handleLogin = async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ 
         email, 
@@ -84,11 +85,6 @@ function App() {
       if (!profile || !ALL_ADMIN_ROLES.includes(profile.role as AdminRole)) {
         await supabase.auth.signOut();
         throw new Error("Rôle non autorisé");
-      }
-
-      if (profile.role !== role) {
-        await supabase.auth.signOut();
-        throw new Error(`Vous n'êtes pas enregistré comme ${ADMIN_ROLES[role].label}`);
       }
 
       return {
@@ -124,7 +120,7 @@ function App() {
             path="/admin/*"
             element={
               <ProtectedRoute user={authUser}>
-                <Admin user={authUser!} onLogout={handleLogout} />
+                <Admin user={authUser!} onLogout={handleLogout} onLogin={handleLogin} />
               </ProtectedRoute>
             }
           />
