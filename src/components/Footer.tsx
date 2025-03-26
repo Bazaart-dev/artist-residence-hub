@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Linkedin, ArrowUp } from 'lucide-react';
 import { useSite } from '@/contexts/SiteContext';
 import AdminLogin from './admin/AdminLogin';
+
 const Footer = () => {
   const { data } = useSite();
   const { socialLinks } = data.settings;
@@ -43,7 +43,8 @@ const Footer = () => {
   };
 
   const handleLogin = (user: { email: string; role: string }) => {
-    // Store in localStorage happens in App.tsx
+    // Store in localStorage
+    localStorage.setItem('bazaart-admin-user', JSON.stringify(user));
     setIsLoggedIn(true);
     window.dispatchEvent(new Event('storage'));
     window.location.href = '/admin';
