@@ -1,33 +1,34 @@
-
 import { createClient } from '@supabase/supabase-js';
 
-// 1. Configuration plus robuste des variables d'environnement
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Vérification plus sécurisée des variables d'environnement
+const getEnvVar = (key: string): string => {
+  const value = import.meta.env[key];
+  if (value === undefined) {
+    throw new Error(`Missing environment variable: ${key}`);
+  }
+  return value;
+};
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error(
-    'Supabase credentials missing! Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY'
-  );
-}
+const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
+const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
-// 2. Configuration recommandée par Supabase
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Configuration de base sans typage initial
+const baseClient = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: true, // Essential for session persistence
+    persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce' // Better security
+    detectSessionInUrl: false, // Désactivé pour éviter des bugs avec React Router
+    flowType: 'pkce'
   }
 });
 
-// 3. Vérification de la connexion au démarrage (optionnel)
-supabase.auth.getSession().then(({ data: { session } }) => {
-  console.log('Initial session:', session);
-});
+// Vérification immédiate de la connexion
+baseClient.auth.getSession()
+  .then(({ data: { session } }) => console.debug('Session initiale:', session))
+  .catch(console.error);
 
-// 4. Typage TypeScript amélioré (optionnel mais recommandé)
-export interface Database {
+// Typage (à adapter selon votre base de données)
+interface Database {
   public: {
     Tables: {
       profiles: {
@@ -37,10 +38,12 @@ export interface Database {
           role: string;
         };
       };
-      // Ajoutez vos autres tables ici
     };
   };
 }
 
-// Client typé
-export const typedSupabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+// Exportez les clients
+export const supabase = baseClient as SupabaseClient<Database>;
+export const typedSupabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: baseClient.auth.options
+});
