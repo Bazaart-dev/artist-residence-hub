@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { SiteProvider } from './contexts/SiteContext';
@@ -11,7 +12,7 @@ import NotFound from './pages/NotFound';
 import { Toaster } from '@/components/ui/sonner';
 
 type AuthUser = {
-  username: string;
+  email: string;
   role: string;
 } | null;
 
@@ -40,7 +41,7 @@ function App() {
     }
   }, [authUser]);
 
-  const handleLogin = (user: { username: string; role: string }) => {
+  const handleLogin = (user: { email: string; role: string }) => {
     setAuthUser(user);
   };
 

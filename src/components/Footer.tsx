@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Linkedin, ArrowUp } from 'lucide-react';
@@ -42,7 +43,7 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLogin = (user: { username: string; role: string }) => {
+  const handleLogin = (user: { email: string; role: string }) => {
     // Store in localStorage happens in App.tsx
     setIsLoggedIn(true);
     window.dispatchEvent(new Event('storage'));
