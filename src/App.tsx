@@ -25,7 +25,7 @@ function App() {
       console.warn("Auth check taking too long, forcing load");
       setLoading(false);
     }
-  }, 10000); // 10 secondes timeout
+  }, 1000); // 1 secondes timeout
     
     const checkAuth = async () => {
       console.log('Session:', session);
