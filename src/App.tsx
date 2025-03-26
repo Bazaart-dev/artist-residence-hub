@@ -101,19 +101,19 @@ const [loading, setLoading] = useState(true);
     <SiteProvider>
       <Router>
         <Routes>
-         <Route
-  path="/admin/*"
-  element={
-    <ProtectedRoute>
-      <Admin user={authUser} onLogout={handleLogout} onLogin={handleLogin} />
-    </ProtectedRoute>
-  }
-/>
+          <Route path="/" element={<Index />} />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute>
+                <Admin user={authUser} onLogout={handleLogout} onLogin={handleLogin} />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Toaster />
       </Router>
     </SiteProvider>
   );
 }
-
 export default App;
