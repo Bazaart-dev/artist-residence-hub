@@ -12,7 +12,7 @@ import Admin from './pages/Admin';
 import { ADMIN_ROLES, ALL_ADMIN_ROLES, type AdminRole } from '@/lib/constants';
 
 function App() {
-const [authUser, setAuthUser] = useState(null); // Ajoutez cet état
+const [authUser, setAuthUser] = useState(null); 
 const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -101,19 +101,14 @@ const [loading, setLoading] = useState(true);
     <SiteProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute>
-                <Admin 
-                  user={authUser} 
-                  onLogout={handleLogout} 
-                  onLogin={handleLogin} 
-                />
-              </ProtectedRoute>
-            }
-          />
+         <Route
+  path="/admin/*"
+  element={
+    <ProtectedRoute>
+      <Admin user={authUser} onLogout={handleLogout} onLogin={handleLogin} />
+    </ProtectedRoute>
+  }
+/>
         </Routes>
         <Toaster />
       </Router>
