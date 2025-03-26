@@ -19,18 +19,8 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
-      const authTimeout = setTimeout(() => {
-    if (loading) {
-      console.warn("Auth check taking too long, forcing load");
-      setLoading(false);
-    }
-  }, 1000); // 1 secondes timeout
     
     const checkAuth = async () => {
-      console.log('Session:', session);
-console.log('Profile:', profile);
-console.log('Auth User:', authUser);
       
         setLoading(true); // Réinitialise le chargement à true au début
       try {
@@ -45,11 +35,9 @@ console.log('Auth User:', authUser);
             .eq('id', session.user.id)
             .single();
 
-          if (profileError) throw profileError;
+          console.log('Profile:', profile); // Ajouté
 
-          if (!ALL_ADMIN_ROLES.includes(profile?.role as AdminRole)) {
-            throw new Error('Rôle non autorisé');
-          }
+          if (profileError) throw profileError;
 
           setAuthUser({
             email: session.user.email || '',
@@ -107,10 +95,10 @@ console.log('Auth User:', authUser);
         .eq('id', data.user.id)
         .single();
 
-      if (!profile || !ALL_ADMIN_ROLES.includes(profile.role as AdminRole)) {
-        await supabase.auth.signOut();
-        throw new Error("Rôle non autorisé");
-      }
+if (!profile) {
+  await supabase.auth.signOut();
+  throw new Error("Profil utilisateur non trouvé");
+}
 
       return {
         email: data.user.email || email,
