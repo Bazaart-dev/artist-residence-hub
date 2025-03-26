@@ -101,6 +101,9 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
         email: data.user?.email || values.email, 
         role: userData.role 
       });
+
+     // Redirection vers la page admin.tsx
+      router.push('/admin'); // Modifiez le chemin si nécessaire
       
       setIsOpen(false);
     } catch (error) {
