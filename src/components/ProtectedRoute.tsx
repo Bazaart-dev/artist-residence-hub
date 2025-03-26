@@ -1,18 +1,28 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
+import { supabase } from '@/lib/supabaseClient';
 
-interface ProtectedRouteProps {
-  user: {
-    email: string;
-    id: string;
-  } | null;
-  children: React.ReactElement;
-}
+const ProtectedRoute = ({ children }) => {
+  const location = useLocation();
+  const [authVerified, setAuthVerified] = React.useState(false);
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ user, children }) => {
-  if (!user) {
-    console.log('Redirection vers / - User non connecté');
-    return <Navigate to="/" replace />;
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (!session || error) {
+        console.log('Redirection vers / - Session:', session, 'Error:', error);
+        setAuthVerified(false);
+      } else {
+        setAuthVerified(true);
+      }
+    };
+
+    checkAuth();
+  }, [location]);
+
+  if (!authVerified) {
+    return <Navigate to="/" replace state={{ from: location }} />;
   }
 
   return children;
