@@ -12,14 +12,37 @@ import Admin from './pages/Admin';
 import { ADMIN_ROLES, ALL_ADMIN_ROLES, type AdminRole } from '@/lib/constants';
 
 function App() {
+const [authUser, setAuthUser] = useState(null); // Ajoutez cet état
 const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-        supabase.auth.onAuthStateChange((event, session) => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+        
+        setAuthUser({
+          email: session.user.email,
+          role: profile?.role,
+          id: session.user.id
+        });
+      }
       setLoading(false);
-    });
-  }, []);
+    };
 
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') checkAuth();
+      if (event === 'SIGNED_OUT') setAuthUser(null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   //SECTION LOADING
   if (loading) {
@@ -74,7 +97,7 @@ const [loading, setLoading] = useState(true);
     toast.success('Déconnexion réussie');
   };
 
-  return (
+ return (
     <SiteProvider>
       <Router>
         <Routes>
@@ -83,7 +106,11 @@ const [loading, setLoading] = useState(true);
             path="/admin/*"
             element={
               <ProtectedRoute>
-                <Admin />
+                <Admin 
+                  user={authUser} 
+                  onLogout={handleLogout} 
+                  onLogin={handleLogin} 
+                />
               </ProtectedRoute>
             }
           />
