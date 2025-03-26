@@ -65,125 +65,82 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     }
   });
 
-  const handleLogin = async (values: z.infer<typeof formSchema>) => {
-    try {
-      // In a real app, we would connect to Supabase
-      // For demonstration purposes, we'll use a mock login
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Check if we have credentials
-      if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
-        // Connect to Supabase
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: values.email,
-          password: values.password
-        });
+const handleLogin = async (values: z.infer<typeof formSchema>) => {
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password
+    });
 
-        if (error) {
-          throw error;
-        }
+    if (error) throw error;
 
-        // Get user profile
-        const { data: userData, error: userError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user?.id)
-          .single();
+    // Récupération du rôle
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user?.id)
+      .single();
 
-        if (userError || !userData) {
-          throw new Error("Impossible de récupérer les informations de l'utilisateur");
-        }
+    if (!profile) throw new Error("Profil utilisateur introuvable");
 
-        // Check role permissions
-        if (userData.role !== values.role) {
-          await supabase.auth.signOut();
-          throw new Error("Vous n'avez pas les permissions pour ce rôle");
-        }
-
-        toast.success("Connexion réussie", {
-          description: `Bienvenue !`
-        });
-
-        onLogin({
-          email: data.user?.email || values.email,
-          role: userData.role
-        });
-      } else {
-        // Mock login for development without Supabase
-        console.log('Using mock login since Supabase credentials are not configured');
-        
-        // Only accept admin@bazaart.org with password 'password123'
-        if (values.email === 'admin@bazaart.org' && values.password === 'password123') {
-          toast.success("Connexion réussie", {
-            description: `Bienvenue, ${values.email}!`
-          });
-          
-          onLogin({
-            email: values.email,
-            role: values.role || 'admin'
-          });
-        } else {
-          throw new Error("Identifiants invalides");
-        }
-      }
-      
-      setIsOpen(false);
-    } catch (error) {
-      toast.error("Échec de la connexion", {
-        description: error instanceof Error ? error.message : "Une erreur est survenue"
-      });
+    // Vérification du rôle
+    if (profile.role !== values.role) {
+      await supabase.auth.signOut();
+      throw new Error(`Vous n'avez pas les permissions de ${values.role}`);
     }
-  };
 
-  const handleSignUp = async (values: z.infer<typeof formSchema>) => {
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Check if we have credentials
-      if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
-        // Connect to Supabase
-        const { data, error } = await supabase.auth.signUp({
+    toast.success("Connexion réussie", {
+      description: `Bienvenue ${data.user?.email}`
+    });
+
+    // Appel de la callback parent
+    onLogin({
+      email: data.user?.email || values.email,
+      role: profile.role
+    });
+
+    // Fermeture du modal
+    setIsOpen(false);
+
+  } catch (error) {
+    console.error("Erreur de connexion:", error);
+    toast.error("Échec de la connexion", {
+      description: error instanceof Error ? error.message : "Erreur inconnue"
+    });
+  }
+};
+
+const handleSignUp = async (values: z.infer<typeof formSchema>) => {
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: values.email,
+      password: values.password
+    });
+
+    if (error) throw error;
+
+    // Création du profil AVEC le rôle sélectionné
+    if (data.user?.id) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: data.user.id,
           email: values.email,
-          password: values.password,
-          options: {
-            data: {
-              role: values.role || 'admin'
-            }
-          }
+          role: values.role // Prend le rôle du formulaire
         });
 
-        if (error) {
-          throw error;
-        }
-
-        toast.success("Inscription réussie", {
-          description: "Veuillez vérifier votre email pour confirmer votre compte"
-        });
-
-        // Switch to sign in tab
-        setActiveTab("signin");
-        signUpForm.reset();
-      } else {
-        // Mock signup for development without Supabase
-        console.log('Using mock signup since Supabase credentials are not configured');
-        
-        toast.success("Inscription réussie (mode démo)", {
-          description: "Dans un environnement réel, un email de confirmation serait envoyé."
-        });
-        
-        // Switch to sign in tab
-        setActiveTab("signin");
-        signUpForm.reset();
-      }
-    } catch (error) {
-      toast.error("Échec de l'inscription", {
-        description: error instanceof Error ? error.message : "Une erreur est survenue"
-      });
+      if (profileError) throw profileError;
     }
-  };
+
+    toast.success("Inscription réussie");
+    setActiveTab("signin");
+    signUpForm.reset();
+  } catch (error) {
+    toast.error("Échec de l'inscription", {
+      description: error instanceof Error ? error.message : "Une erreur est survenue"
+    });
+  }
+};
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
