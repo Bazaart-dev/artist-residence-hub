@@ -12,60 +12,14 @@ import Admin from './pages/Admin';
 import { ADMIN_ROLES, ALL_ADMIN_ROLES, type AdminRole } from '@/lib/constants';
 
 function App() {
-  const [authUser, setAuthUser] = useState<{
-    email: string;
-    role: AdminRole;
-    id: string;
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    
-    const checkAuth = async () => {
-      
-        setLoading(true); // Réinitialise le chargement à true au début
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) throw error;
-
-        if (session?.user) {
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
-          console.log('Profile:', profile); // Ajouté
-
-          if (profileError) throw profileError;
-
-          setAuthUser({
-            email: session.user.email || '',
-            role: profile?.role as AdminRole,
-            id: session.user.id
-          });
-        } else {
-          setAuthUser(null);
-        }
-      } catch (error) {
-        console.error('Auth error:', error);
-        setAuthUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (['SIGNED_IN', 'SIGNED_OUT', 'INITIAL_SESSION'].includes(event)) {
-        checkAuth();
-      }
+        supabase.auth.onAuthStateChange((event, session) => {
+      setLoading(false);
     });
-
-    return () => subscription.unsubscribe();
   }, []);
+
 
   //SECTION LOADING
   if (loading) {
@@ -120,17 +74,16 @@ function App() {
     toast.success('Déconnexion réussie');
   };
 
-  return (
+  r return (
     <SiteProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Index />} />
-          
           <Route
             path="/admin/*"
             element={
               <ProtectedRoute>
-                <Admin user={authUser} onLogout={handleLogout} onLogin={handleLogin} />
+                <Admin />
               </ProtectedRoute>
             }
           />
