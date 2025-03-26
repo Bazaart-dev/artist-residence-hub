@@ -11,13 +11,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ADMIN_ROLES } from '@/lib/constants';
+
 
 // Admin roles
-const adminRoles = [
-  { value: "admin", label: "Administrateur" },
-  { value: "editor", label: "Éditeur" },
-  { value: "viewer", label: "Visualiseur" }
-];
+const roleOptions = Object.values(ADMIN_ROLES);
+
 
 const formSchema = z.object({
   email: z.string().email({ message: "Veuillez entrer une adresse email valide" }),
@@ -151,13 +150,13 @@ const handleLogin = async (values: z.infer<typeof formSchema>) => {
                             <SelectValue placeholder="Sélectionnez un rôle" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
-                          {adminRoles.map((role) => (
-                            <SelectItem key={role.value} value={role.value}>
-                              {role.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
+                   <SelectContent>
+  {roleOptions.map(role => (
+    <SelectItem key={role.value} value={role.value}>
+      {role.label}
+    </SelectItem>
+  ))}
+</SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
