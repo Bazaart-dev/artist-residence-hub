@@ -48,20 +48,20 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     }
   });
 
-  const handleLogin = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const user = await onLogin(values.email, values.password);
-      if (user) {
-        toast.success(`Bienvenue ${user.email} (${user.role})`);
-        setIsOpen(false);
-        window.location.reload(); // Force un re-check de l'authentification
-      }
-    } catch (error) {
-      toast.error("Échec de connexion", {
-        description: error instanceof Error ? error.message : "Erreur inconnue"
-      });
+const handleLogin = async (values: z.infer<typeof formSchema>) => {
+  try {
+    const user = await onLogin(values.email, values.password);
+    if (user) {
+      toast.success(`Bienvenue ${user.email} (${user.role})`);
+      setIsOpen(false);
+      // Supprimez le window.location.reload() et laissez React Router gérer la navigation
     }
-  };
+  } catch (error) {
+    toast.error("Échec de connexion", {
+      description: error instanceof Error ? error.message : "Erreur inconnue"
+    });
+  }
+};
 
   const handleSignUp = async (values: z.infer<typeof formSchema>) => {
     try {
