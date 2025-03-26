@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -9,11 +10,12 @@ import Evenements from './pages/Evenements';
 import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 import { Toaster } from '@/components/ui/sonner';
-import { supabase } from './lib/supabaseClient'; // Importez le client Supabase
+import { supabase } from './lib/supabaseClient';
+import { toast } from 'sonner';
 
 function App() {
   const [authUser, setAuthUser] = useState(null);
-  const [loading, setLoading] = useState(true); // État de chargement
+  const [loading, setLoading] = useState(true);
 
   // Vérification de l'authentification au montage
   useEffect(() => {
@@ -40,33 +42,51 @@ function App() {
         }
       } catch (error) {
         console.error('Auth check error:', error);
-        await supabase.auth.signOut();
+        // Ne pas se déconnecter automatiquement en cas d'erreur
       } finally {
+        // Toujours finir le chargement, même en cas d'erreur
         setLoading(false);
       }
     };
+
+    const timeout = setTimeout(() => {
+      // Failsafe: si l'authentification prend trop de temps, on arrête le chargement
+      if (loading) {
+        setLoading(false);
+        console.warn('Authentication check timeout - forcing load completion');
+      }
+    }, 3000);
 
     checkAuth();
 
     // Écoute les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-          
-        setAuthUser({
-          email: session.user.email,
-          role: profile?.role || 'viewer'
-        });
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+            
+          setAuthUser({
+            email: session.user.email,
+            role: profile?.role || 'viewer'
+          });
+        } catch (error) {
+          console.error('Profile fetch error:', error);
+        }
       } else {
         setAuthUser(null);
       }
+      
+      setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogin = async (email, password) => {
@@ -78,29 +98,44 @@ function App() {
 
       if (error) throw error;
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .single();
+      if (data?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
 
-      return {
-        email: data.user.email,
-        role: profile?.role || 'viewer'
-      };
+        return {
+          email: data.user.email,
+          role: profile?.role || 'viewer'
+        };
+      }
+      
+      return null;
     } catch (error) {
       console.error('Login error:', error);
+      toast.error('Erreur de connexion: ' + error.message);
       throw error;
     }
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setAuthUser(null);
+    try {
+      await supabase.auth.signOut();
+      setAuthUser(null);
+      toast.success('Déconnexion réussie');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Erreur lors de la déconnexion');
+    }
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Chargement...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-bazaart-green">
+        <div className="text-2xl font-semibold">Chargement...</div>
+      </div>
+    );
   }
 
   return (
