@@ -90,11 +90,15 @@ function App() {
   }, []);
 
   const handleLogin = async (email, password) => {
+      console.log("handleLogin appelé dans App"); // Debug A
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
+          console.log("Réponse auth dans App", { data, error }); // Debug B
+
 
       if (error) throw error;
 
@@ -105,6 +109,9 @@ function App() {
           .eq('id', data.user.id)
           .single();
 
+              console.log("Profil dans App", profile); // Debug C
+
+      // RETOURNEZ les données utilisateur
         return {
           email: data.user.email,
           role: profile?.role || 'viewer'
@@ -113,7 +120,7 @@ function App() {
       
       return null;
     } catch (error) {
-      console.error('Login error:', error);
+    console.error("Erreur handleLogin dans App", error); // Debug D
       toast.error('Erreur de connexion: ' + error.message);
       throw error;
     }
