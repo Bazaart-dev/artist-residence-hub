@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Linkedin, ArrowUp } from 'lucide-react';
 import { useSite } from '@/contexts/SiteContext';
-import AdminLogin from '@/components/admin/AdminLogin';
-
+import AdminLogin from './admin/AdminLogin';
 const Footer = () => {
   const { data } = useSite();
   const { socialLinks } = data.settings;
