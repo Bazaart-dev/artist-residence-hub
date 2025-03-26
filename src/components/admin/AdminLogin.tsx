@@ -114,6 +114,9 @@ const handleLogin = async (values: z.infer<typeof formSchema>) => {
 };
 
 const handleSignUp = async (values: z.infer<typeof formSchema>) => {
+    // Debug logs
+  console.log("Tentative d'inscription avec:", values);
+  console.log("Rôle sélectionné:", values.role);
   try {
     const { data, error } = await supabase.auth.signUp({
       email: values.email,
