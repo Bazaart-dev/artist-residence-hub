@@ -1,5 +1,5 @@
+
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Lock, User, LogIn } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 
 // Admin roles
 const adminRoles = [
@@ -52,7 +53,13 @@ type AdminLoginProps = {
 
 const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const supabase = createClientComponentClient();
+  const navigate = useNavigate();
+  
+  // Initialize Supabase client
+  const supabase = createClient(
+    import.meta.env.VITE_SUPABASE_URL || '',
+    import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+  );
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -102,8 +109,8 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
         role: userData.role 
       });
 
-     // Redirection vers la page admin.tsx
-      router.push('/admin'); // Modifiez le chemin si nécessaire
+      // Redirection vers la page admin
+      navigate('/admin');
       
       setIsOpen(false);
     } catch (error) {
