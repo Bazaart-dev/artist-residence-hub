@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -34,11 +33,10 @@ type AdminProps = {
     role: string;
   };
   onLogout: () => void;
-  onLogin: (email: string, password: string) => Promise<{ email: string; role: string } | null>; // Ajoutez cette ligne
+  onLogin: (user: { email: string; role: string }) => void;
 };
 
-
-const Admin = ({ user, onLogout }: AdminProps) => {
+const Admin = ({ user, onLogout, onLogin }: AdminProps) => {
   const { data } = useSite();
   const [activeTab, setActiveTab] = useState<string>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -105,14 +103,12 @@ const Admin = ({ user, onLogout }: AdminProps) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Display first character of email for avatar
   const getInitial = () => {
     return user?.email ? user.email.charAt(0).toUpperCase() : 'A';
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b py-4 px-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -128,7 +124,7 @@ const Admin = ({ user, onLogout }: AdminProps) => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-              <AdminLogin onLogin={onLogin} />
+            <AdminLogin onLogin={onLogin} />
             <Link to="/" onClick={scrollToTop} className="text-sm flex items-center gap-1 hover:text-bazaart-pink transition-colors">
               <Home size={16} />
               <span className="hidden sm:inline">Retour au site</span>
@@ -148,7 +144,6 @@ const Admin = ({ user, onLogout }: AdminProps) => {
       </header>
 
       <div className="flex flex-grow">
-        {/* Sidebar for mobile */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.aside
@@ -222,7 +217,6 @@ const Admin = ({ user, onLogout }: AdminProps) => {
           )}
         </AnimatePresence>
 
-        {/* Sidebar for desktop */}
         <aside className="hidden lg:block w-64 border-r bg-white">
           <nav className="p-4 space-y-1">
             <button 
@@ -286,7 +280,6 @@ const Admin = ({ user, onLogout }: AdminProps) => {
           </nav>
         </aside>
 
-        {/* Main content */}
         <main className="flex-grow p-6">
           <motion.div
             initial="hidden"
