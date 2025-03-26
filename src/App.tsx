@@ -1,47 +1,52 @@
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import { SiteProvider } from './contexts/SiteContext';
-import Index from './pages/Index';
-import Presentation from './pages/Presentation';
-import Projets from './pages/Projets';
-import Evenements from './pages/Evenements';
-import Admin from './pages/Admin';
-import NotFound from './pages/NotFound';
 import { Toaster } from '@/components/ui/sonner';
 import { supabase } from './lib/supabaseClient';
 import { toast } from 'sonner';
-import ProtectedRoute from './components/ProtectedRoute';
-import { ALLOWED_ROLES } from '@/lib/constants';
-
+import ProtectedRoute from '@/components/ProtectedRoute';
+import Index from './pages/Index';
+import Admin from './pages/Admin';
+import { ADMIN_ROLES, ALL_ADMIN_ROLES, type AdminRole } from '@/lib/constants';
 
 function App() {
-  const [authUser, setAuthUser] = useState<{ email: string; role: string; id: string; } | null>(null);
+  const [authUser, setAuthUser] = useState<{
+    email: string;
+    role: AdminRole;
+    id: string;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Vérification de l'authentification au montage
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        if (session) {
-          const { data: profile } = await supabase
+        if (error) throw error;
+
+        if (session?.user) {
+          const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('role')
             .eq('id', session.user.id)
             .single();
-            
+
+          if (profileError) throw profileError;
+
+          if (!ALL_ADMIN_ROLES.includes(profile?.role as AdminRole)) {
+            throw new Error('Rôle non autorisé');
+          }
+
           setAuthUser({
             email: session.user.email || '',
-            role: profile?.role || 'viewer'
+            role: profile?.role as AdminRole,
+            id: session.user.id
           });
         } else {
           setAuthUser(null);
         }
       } catch (error) {
-        console.error('Auth check error:', error);
+        console.error('Auth error:', error);
         setAuthUser(null);
       } finally {
         setLoading(false);
@@ -50,68 +55,63 @@ function App() {
 
     checkAuth();
 
-    // Écoute les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+      if (['SIGNED_IN', 'SIGNED_OUT', 'INITIAL_SESSION'].includes(event)) {
         checkAuth();
       }
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (email: string, password: string, role: AdminRole) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
       });
 
       if (error) throw error;
 
-      if (data.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
+      if (!data.user) throw new Error("Aucun utilisateur retourné");
 
-        const user = {
-          email: data.user.email || email,
-          role: profile?.role || 'viewer'
-        };
-        
-        // Met à jour l'état authUser directement après une connexion réussie
-        setAuthUser(user);
-        
-        return user;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      if (!profile || !ALL_ADMIN_ROLES.includes(profile.role as AdminRole)) {
+        await supabase.auth.signOut();
+        throw new Error("Rôle non autorisé");
       }
-      return null;
+
+      if (profile.role !== role) {
+        await supabase.auth.signOut();
+        throw new Error(`Vous n'êtes pas enregistré comme ${ADMIN_ROLES[role].label}`);
+      }
+
+      return {
+        email: data.user.email || email,
+        role: profile.role as AdminRole,
+        id: data.user.id
+      };
     } catch (error) {
-      toast.error('Erreur de connexion: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
+      toast.error('Erreur de connexion', {
+        description: error instanceof Error ? error.message : 'Erreur inconnue'
+      });
       throw error;
     }
   };
 
   const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      setAuthUser(null);
-      toast.success('Déconnexion réussie');
-    } catch (error) {
-      console.error('Logout error:', error);
-      toast.error('Erreur lors de la déconnexion');
-    }
+    await supabase.auth.signOut();
+    setAuthUser(null);
+    toast.success('Déconnexion réussie');
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-bazaart-green">
-        <div className="text-2xl font-semibold">Chargement...</div>
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen">Chargement...</div>;
   }
 
   return (
@@ -119,24 +119,17 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/presentation" element={<Presentation />} />
-          <Route path="/projets" element={<Projets />} />
-          <Route path="/evenements" element={<Evenements />} />
           
-          <Route 
-            path="/admin/*" 
+          <Route
+            path="/admin/*"
             element={
-       // Dans la route protégée :
-<ProtectedRoute 
-  allowedRoles={ALLOWED_ROLES}
-  user={authUser}
->
-  <Admin />
-</ProtectedRoute>
-            } 
+              <ProtectedRoute user={authUser}>
+                <Admin user={authUser!} onLogout={handleLogout} />
+              </ProtectedRoute>
+            }
           />
           
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
       <Toaster position="top-right" />
