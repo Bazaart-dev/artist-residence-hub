@@ -23,6 +23,7 @@ function App() {
       console.log('Session:', session);
 console.log('Profile:', profile);
 console.log('Auth User:', authUser);
+        setLoading(true); // Réinitialise le chargement à true au début
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
         
