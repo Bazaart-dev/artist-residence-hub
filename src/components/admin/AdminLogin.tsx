@@ -28,9 +28,7 @@ type AdminLoginProps = {
 };
 
 const AdminLogin = ({ onLogin }: AdminLoginProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
-  
+  const [isOpen, setIsOpen] = useState(false);  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
