@@ -26,6 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSite } from '@/contexts/SiteContext';
 import { toast } from 'sonner';
+import AdminLogin from '@/components/admin/AdminLogin';
 
 type AdminProps = {
   user: {
@@ -33,7 +34,9 @@ type AdminProps = {
     role: string;
   };
   onLogout: () => void;
+  onLogin: (email: string, password: string) => Promise<{ email: string; role: string } | null>; // Ajoutez cette ligne
 };
+
 
 const Admin = ({ user, onLogout }: AdminProps) => {
   const { data } = useSite();
