@@ -20,7 +20,7 @@ const roleOptions = Object.values(ADMIN_ROLES);
 const formSchema = z.object({
   email: z.string().email({ message: "Veuillez entrer une adresse email valide" }),
   password: z.string().min(6, { message: "Le mot de passe doit contenir au moins 6 caractères" }),
-  role: z.string()
+ role: z.custom<AdminRole>(val => Object.keys(ADMIN_ROLES).includes(val as string))
 });
 
 type AdminLoginProps = {
@@ -51,7 +51,7 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 
 const handleLogin = async (values: z.infer<typeof formSchema>) => {
   try {
-    const user = await onLogin(values.email, values.password, values.role);
+    const user = await onLogin(values.email, values.password, values.role as AdminRole);
     if (user) {
       toast.success(`Bienvenue ${user.email} (${user.role})`);
       setIsOpen(false);
@@ -143,16 +143,16 @@ const handleLogin = async (values: z.infer<typeof formSchema>) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Rôle</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Sélectionnez un rôle" />
                           </SelectTrigger>
                         </FormControl>
                    <SelectContent>
-  {roleOptions.map(role => (
-    <SelectItem key={role.value} value={role.value}>
-      {role.label}
+  {Object.values(ADMIN_ROLES).map(role => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label}
     </SelectItem>
   ))}
 </SelectContent>
