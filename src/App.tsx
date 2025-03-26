@@ -13,6 +13,8 @@ import { Toaster } from '@/components/ui/sonner';
 import { supabase } from './lib/supabaseClient';
 import { toast } from 'sonner';
 import ProtectedRoute from './components/ProtectedRoute';
+import { ALLOWED_ROLES } from '@/lib/constants';
+
 
 function App() {
   const [authUser, setAuthUser] = useState<{ email: string; role: string; id: string; } | null>(null);
@@ -124,13 +126,13 @@ function App() {
           <Route 
             path="/admin/*" 
             element={
-              <ProtectedRoute user={authUser} loading={loading}>
-                <Admin 
-                  user={authUser!} 
-                  onLogout={handleLogout} 
-                  onLogin={handleLogin} 
-                />
-              </ProtectedRoute>
+       // Dans la route protégée :
+<ProtectedRoute 
+  allowedRoles={ALLOWED_ROLES}
+  user={authUser}
+>
+  <Admin />
+</ProtectedRoute>
             } 
           />
           
