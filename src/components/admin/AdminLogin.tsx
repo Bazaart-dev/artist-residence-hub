@@ -58,5 +58,4 @@ function App() {
     </SiteProvider>
   );
 }
-- export { AdminLogin };
-+ export default AdminLogin;
+export default AdminLogin;
