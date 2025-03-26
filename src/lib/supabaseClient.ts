@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 
 // 1. Configuration plus robuste des variables d'environnement
@@ -25,7 +26,7 @@ supabase.auth.getSession().then(({ data: { session } }) => {
   console.log('Initial session:', session);
 });
 
-// 4. Typage TypeScript amélioré (optionnel mais recommandé)
+// 4. Typage TypeScript amélioré
 interface Database {
   public: {
     Tables: {
