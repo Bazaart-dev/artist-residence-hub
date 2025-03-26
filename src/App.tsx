@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -10,44 +9,99 @@ import Evenements from './pages/Evenements';
 import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 import { Toaster } from '@/components/ui/sonner';
-
-type AuthUser = {
-  email: string;
-  role: string;
-} | null;
+import { supabase } from './lib/supabaseClient'; // Importez le client Supabase
 
 function App() {
-  const [authUser, setAuthUser] = useState<AuthUser>(null);
+  const [authUser, setAuthUser] = useState(null);
+  const [loading, setLoading] = useState(true); // État de chargement
 
-  // Check for user in localStorage on mount
+  // Vérification de l'authentification au montage
   useEffect(() => {
-    const storedUser = localStorage.getItem('bazaart-admin-user');
-    if (storedUser) {
+    const checkAuth = async () => {
       try {
-        setAuthUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Error parsing stored user:', e);
-        localStorage.removeItem('bazaart-admin-user');
+        // 1. Vérifie la session active
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          // 2. Récupère le profil utilisateur
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+            
+          if (error) throw error;
+          
+          // 3. Stocke l'utilisateur dans le state
+          setAuthUser({
+            email: session.user.email,
+            role: profile?.role || 'viewer'
+          });
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        await supabase.auth.signOut();
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    checkAuth();
+
+    // Écoute les changements d'authentification
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+          
+        setAuthUser({
+          email: session.user.email,
+          role: profile?.role || 'viewer'
+        });
+      } else {
+        setAuthUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  // Save user to localStorage on change
-  useEffect(() => {
-    if (authUser) {
-      localStorage.setItem('bazaart-admin-user', JSON.stringify(authUser));
-    } else {
-      localStorage.removeItem('bazaart-admin-user');
-    }
-  }, [authUser]);
+  const handleLogin = async (email, password) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-  const handleLogin = (user: { email: string; role: string }) => {
-    setAuthUser(user);
+      if (error) throw error;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      return {
+        email: data.user.email,
+        role: profile?.role || 'viewer'
+      };
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setAuthUser(null);
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Chargement...</div>;
+  }
 
   return (
     <SiteProvider>
