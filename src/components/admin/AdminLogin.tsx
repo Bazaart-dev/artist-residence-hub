@@ -11,8 +11,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ADMIN_ROLES } from '@/lib/constants';
-
+import { ADMIN_ROLES, type AdminRole } from '@/lib/constants';
 
 // Admin roles
 const roleOptions = Object.values(ADMIN_ROLES);
@@ -25,7 +24,7 @@ const formSchema = z.object({
 });
 
 type AdminLoginProps = {
-  onLogin: (email: string, password: string) => Promise<{ email: string; role: string } | null>;
+  onLogin: (email: string, password: string) => Promise<{ email: string; role: AdminRole } | null>;
 };
 
 const AdminLogin = ({ onLogin }: AdminLoginProps) => {
@@ -52,9 +51,9 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 
 const handleLogin = async (values: z.infer<typeof formSchema>) => {
   try {
-    const user = await onLogin(values.email, values.password);
+    const user = await onLogin(values.email, values.password, values.role);
     if (user) {
-      toast.success(`Bienvenue ${user.email}`);
+      toast.success(`Bienvenue ${user.email} (${user.role})`);
       setIsOpen(false);
       window.location.reload(); // Force un re-check de l'authentification
     }
