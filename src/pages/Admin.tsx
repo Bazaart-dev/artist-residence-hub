@@ -33,7 +33,7 @@ type AdminProps = {
     role: string;
   };
   onLogout: () => void;
-  onLogin: (user: { email: string; role: string }) => void;
+onLogin: (email: string, password: string) => Promise<{ email: string; role: string } | null>; // Modifié ici
 };
 
 const Admin = ({ user, onLogout, onLogin }: AdminProps) => {
