@@ -16,6 +16,21 @@ const [authUser, setAuthUser] = useState(null);
 const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+      const authTimeout = setTimeout(() => {
+    if (loading) {
+      console.warn('Auth check taking too long, forcing loading to false');
+      setLoading(false);
+    }
+  }, 10000); // 10 secondes timeout
+
+  // ... votre code existant de checkAuth ...
+
+  return () => {
+    clearTimeout(authTimeout);
+    subscription.unsubscribe();
+  };
+}, []);
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
