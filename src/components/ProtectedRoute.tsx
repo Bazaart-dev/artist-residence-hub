@@ -8,10 +8,21 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children, user, loading }: ProtectedRouteProps) => {
   if (loading) {
-    return null; // Ou votre spinner ici si vous préférez
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-bazaart-pink"></div>
+          <p>Vérification de l'authentification...</p>
+        </div>
+      </div>
+    );
   }
 
-  return user ? children : <Navigate to="/" replace />;
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;
