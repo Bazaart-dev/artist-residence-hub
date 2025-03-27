@@ -1,26 +1,14 @@
-import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from './contexts/AuthContext'; // Vous devriez créer ce contexte
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const [loading, setLoading] = useState(true);
-  const [verified, setVerified] = useState(false);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setVerified(!!session);
-      setLoading(false);
-    };
-
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(checkAuth);
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (loading) return null; // ou un spinner
-  return verified ? children : <Navigate to="/" replace />;
+  const { user, loading } = useAuth(); // Récupérez l'état d'authentification depuis un contexte
+  
+  if (loading) {
+    return <div>Chargement...</div>;
+  }
+  
+  return user ? children : <Navigate to="/" replace />;
 };
 
 export default ProtectedRoute;
