@@ -105,9 +105,10 @@ const [loading, setLoading] = useState(true);
           <Route
             path="/admin/*"
             element={
-              <ProtectedRoute>
-                <Admin user={authUser} onLogout={handleLogout} onLogin={handleLogin} />
-              </ProtectedRoute>
+// Dans le return de App.tsx
+<ProtectedRoute user={authUser} loading={loading}>
+  <Admin onLogout={handleLogout} onLogin={handleLogin} />
+</ProtectedRoute>
             }
           />
         </Routes>
