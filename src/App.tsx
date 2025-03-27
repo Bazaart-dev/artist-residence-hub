@@ -30,7 +30,7 @@ const [loading, setLoading] = useState(true);
     clearTimeout(authTimeout);
     subscription.unsubscribe();
   };
-}, []);
+
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
