@@ -1,5 +1,6 @@
+
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Outlet } from 'react-router-dom';
 import { LayoutDashboard, Home, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/useAuth';
@@ -35,7 +36,7 @@ const Admin = () => {
       </header>
       
       <div className="flex-grow p-6">
-        {/* Votre contenu admin ici */}
+        <Outlet />
       </div>
     </div>
   );

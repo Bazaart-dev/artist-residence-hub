@@ -15,7 +15,6 @@ import { SiteProvider } from './contexts/SiteContext';
 import AdminAuthWrapper from './components/AdminAuthWrapper';
 import AdminLayout from './components/AdminLayout';
 
-
 // Composants admin
 import AdminEvents from '@/components/admin/AdminEvents';
 import AdminMedia from '@/components/admin/AdminMedia';
@@ -36,9 +35,8 @@ function App() {
           <Route path="/projets" element={<Projets />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/evenements" element={<Evenements />} />
-          <Route path="/admin/*" element={<Admin />} />
-          <Route path="*" element={<NotFound />} />
-
+          
+          {/* Admin routes */}
           <Route 
             path="/admin" 
             element={
@@ -56,6 +54,9 @@ function App() {
             <Route path="security" element={<SecuritySettings />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
+          
+          {/* 404 page */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </SiteProvider>
