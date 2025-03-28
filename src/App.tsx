@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Index from './pages/Index';
 import Presentation from './pages/Presentation';
@@ -9,6 +8,7 @@ import Evenements from './pages/Evenements';
 import Projets from './pages/Projets';
 import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
+import Login from './pages/Login';
 import { SiteProvider } from './contexts/SiteContext';
 
 // Admin
@@ -35,13 +35,14 @@ function App() {
           <Route path="/projets" element={<Projets />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/evenements" element={<Evenements />} />
+          <Route path="/login" element={<Login />} />
           
           {/* Admin routes */}
           <Route 
             path="/admin" 
             element={
               <AdminAuthWrapper>
-                <AdminLayout />
+                <Admin />
               </AdminAuthWrapper>
             }
           >
