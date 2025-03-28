@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { SiteProvider } from './contexts/SiteContext';
 import { Toaster } from '@/components/ui/sonner';
-import HomePage from './pages/HomePage';
+import Index from './pages/index';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import AdminLayout from './admin/AdminLayout';
@@ -14,9 +14,12 @@ function App() {
       <Router>
         <Routes>
           {/* Routes publiques */}
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<index />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/presentation" element={<presentation />} />
+          <Route path="/projets" element={<projets />} />
+          <Route path="/evenements" element={<evenements />} />
             <Route path="/login" element={<LoginPage />} />
 
 
