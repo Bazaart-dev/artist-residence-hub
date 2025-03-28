@@ -9,9 +9,17 @@ import Presentation from './pages/Presentation';
 import Projets from './pages/Projets';
 import Evenements from './pages/Evenements';
 import AdminAuthWrapper from './components/AdminAuthWrapper';
-import SecuritySettings from '@/components/admin/SecuritySettings';
+import AdminLayout from './components/AdminLayout'; 
+
+// Import des composants admin
+import AdminEvents from '@/components/admin/AdminEvents';
+import AdminHome from '@/components/admin/AdminHome';
+import AdminMedia from '@/components/admin/AdminMedia';
+import AdminPages from '@/components/admin/AdminPages';
+import AdminProjects from '@/components/admin/AdminProjects'; // Nom corrigé
+import AdminSettings from '@/components/admin/AdminSettings';
 import AppearanceSettings from '@/components/admin/AppearanceSettings';
-import AdminProjetcs from '@/components/admin/AdminProjects';
+import SecuritySettings from '@/components/admin/SecuritySettings';
 
 
 function App() {
