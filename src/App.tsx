@@ -9,20 +9,23 @@ import Evenements from './pages/Evenements';
 import Projets from './pages/Projets';
 import Admin from './pages/Admin';
 import NotFoundPage from './components/NotFoundPage';
+import { SiteProvider } from './contexts/SiteContext';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/presentation" element={<Presentation />} />
-        <Route path="/projets" element={<Projets />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/evenements" element={<Evenements />} />
-        <Route path="/admin/*" element={<Admin />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </Router>
+    <SiteProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/presentation" element={<Presentation />} />
+          <Route path="/projets" element={<Projets />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/evenements" element={<Evenements />} />
+          <Route path="/admin/*" element={<Admin />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Router>
+    </SiteProvider>
   );
 }
 
