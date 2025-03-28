@@ -13,7 +13,7 @@ import AdminLayout from './components/AdminLayout';
 import AdminAuthWrapper from './components/AdminAuthWrapper';
 import SecuritySettings from '@/components/admin/SecuritySettings';
 import AppearanceSettings from '@/components/admin/AppearanceSettings';
-import AdminProjets from '@/components/admin/AdminProjets';
+import AdminProjetcs from '@/components/admin/AdminProjects';
 
 
 function App() {
