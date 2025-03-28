@@ -30,6 +30,7 @@ const AdminAuthWrapper = ({ children }: { children: React.ReactNode }) => {
           });
         }
       } catch (error) {
+        console.error("Erreur d'authentification:", error);
         toast.error('Erreur de vérification');
       } finally {
         setLoading(false);
@@ -38,7 +39,9 @@ const AdminAuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
     checkAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(checkAuth);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      checkAuth();
+    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -59,7 +62,7 @@ const AdminAuthWrapper = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return children;
+  return <>{children}</>;
 };
 
 export default AdminAuthWrapper;
