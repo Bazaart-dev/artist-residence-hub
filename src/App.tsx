@@ -29,6 +29,13 @@ function App() {
 
 
           {/* Routes admin protégées */}
+          <Route path="/admin" element={
+    <AdminAuthWrapper>
+      {/* Layout commun à toutes les sous-routes */}
+      <AdminLayout /> 
+    </AdminAuthWrapper>
+  }
+>
             <Route index element={<Admin />} />
             <Route path="events" element={<AdminEvents />} />
             <Route path="login" element={<AdminLogin />} />
