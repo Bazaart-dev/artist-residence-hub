@@ -4,10 +4,10 @@ import { SiteProvider } from './contexts/SiteContext';
 import { Toaster } from '@/components/ui/sonner';
 import Index from './pages/index';
 import Contact from './pages/Contact';
-import Admin from './pages/admin';
-import Presentation from './pages/presentation';
-import Projets from './pages/projets';
-import Evenements from './pages/evenements';
+import Admin from './pages/Admin';
+import Presentation from './pages/Presentation';
+import Projets from './pages/Projets';
+import Evenements from './pages/Evenements';
 
 import AdminLayout from './admin/AdminLayout';
 import AdminAuthWrapper from './components/AdminAuthWrapper';
@@ -20,10 +20,10 @@ function App() {
         <Routes>
           {/* Routes publiques */}
           <Route path="/" element={<index />} />
-          <Route path="/contact" element={<contact />} />
-          <Route path="/presentation" element={<presentation />} />
-          <Route path="/projets" element={<projets />} />
-          <Route path="/evenements" element={<evenements />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/presentation" element={<Presentation />} />
+          <Route path="/projets" element={<Projets />} />
+          <Route path="/evenements" element={<Evenements />} />
             <Route path="/login" element={<LoginPage />} />
 
 
