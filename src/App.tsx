@@ -24,6 +24,7 @@ import AdminProjects from '@/components/admin/AdminProjects';
 import AdminSettings from '@/components/admin/AdminSettings';
 import AppearanceSettings from '@/components/admin/AppearanceSettings';
 import SecuritySettings from '@/components/admin/SecuritySettings';
+import AdminHome from '@/components/admin/AdminHome';
 
 function App() {
   return (
