@@ -43,7 +43,7 @@ function App() {
             <Route path="home" element={<AdminHome />} />
             <Route path="media" element={<AdminMedia />} />            
             <Route path="pages" element={<AdminPages />} />
-            <Route path="projets" element={<AdminProjets />} />
+            <Route path="projets" element={<AdminProjects />} />
             <Route path="appearance" element={<AppearanceSettings />} />
             <Route path="security" element={<SecuritySettings />} />
             <Route path="settings" element={<AdminSettings />} />
