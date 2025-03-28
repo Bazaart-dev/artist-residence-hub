@@ -2,16 +2,20 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { SiteProvider } from './contexts/SiteContext';
 import { Toaster } from '@/components/ui/sonner';
+
+// Routes publiques
 import Index from './pages/Index';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import Presentation from './pages/Presentation';
 import Projets from './pages/Projets';
 import Evenements from './pages/Evenements';
+
+// Admin
 import AdminAuthWrapper from './components/AdminAuthWrapper';
 import AdminLayout from './components/AdminLayout'; 
 
-// Import des composants admin
+// Admin
 import AdminEvents from '@/components/admin/AdminEvents';
 import AdminHome from '@/components/admin/AdminHome';
 import AdminMedia from '@/components/admin/AdminMedia';
@@ -34,13 +38,10 @@ function App() {
           <Route path="/presentation" element={<Presentation />} />
           <Route path="/projets" element={<Projets />} />
           <Route path="/evenements" element={<Evenements />} />
-            <Route path="/login" element={<LoginPage />} />
-
 
           {/* Routes admin protégées */}
           <Route path="/admin" element={
     <AdminAuthWrapper>
-      {/* Layout commun à toutes les sous-routes */}
       <AdminLayout /> 
     </AdminAuthWrapper>
   }
