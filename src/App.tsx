@@ -9,7 +9,7 @@ import Presentation from './pages/Presentation';
 import Projets from './pages/Projets';
 import Evenements from './pages/Evenements';
 
-import AdminLayout from './admin/AdminLayout';
+import AdminLayout from './components/AdminLayout';
 import AdminAuthWrapper from './components/AdminAuthWrapper';
 
 
