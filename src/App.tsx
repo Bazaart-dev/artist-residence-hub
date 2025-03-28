@@ -8,7 +8,7 @@ import Contact from './pages/Contact';
 import Evenements from './pages/Evenements';
 import Projets from './pages/Projets';
 import Admin from './pages/Admin';
-import NotFoundPage from './components/NotFoundPage';
+import NotFound from './pages/NotFound';
 import { SiteProvider } from './contexts/SiteContext';
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/evenements" element={<Evenements />} />
           <Route path="/admin/*" element={<Admin />} />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </SiteProvider>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 const NotFoundPage: React.FC = () => {
   return (
@@ -11,8 +12,11 @@ const NotFoundPage: React.FC = () => {
       <p className="text-gray-600 mb-8 max-w-md">
         Désolé, nous n'avons pas pu trouver la page que vous cherchez.
       </p>
-      <Button asChild className="px-6 py-2">
-        <Link to="/">Retour à l'accueil</Link>
+      <Button asChild className="flex items-center gap-2 px-6 py-2">
+        <Link to="/">
+          <ArrowLeft size={16} className="mr-2" />
+          Retour à l'accueil
+        </Link>
       </Button>
     </div>
   );
