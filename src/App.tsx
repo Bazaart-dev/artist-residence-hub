@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { SiteProvider } from './contexts/SiteContext';
 import { Toaster } from '@/components/ui/sonner';
-import Index from './pages/index';
+import Index from './pages/Index';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import Presentation from './pages/Presentation';
@@ -19,7 +19,7 @@ function App() {
       <Router>
         <Routes>
           {/* Routes publiques */}
-          <Route path="/" element={<index />} />
+          <Route path="/" element={<Index />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/presentation" element={<Presentation />} />
           <Route path="/projets" element={<Projets />} />
