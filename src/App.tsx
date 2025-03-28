@@ -8,8 +8,6 @@ import Admin from './pages/Admin';
 import Presentation from './pages/Presentation';
 import Projets from './pages/Projets';
 import Evenements from './pages/Evenements';
-
-import AdminLayout from './components/AdminLayout';
 import AdminAuthWrapper from './components/AdminAuthWrapper';
 import SecuritySettings from '@/components/admin/SecuritySettings';
 import AppearanceSettings from '@/components/admin/AppearanceSettings';
