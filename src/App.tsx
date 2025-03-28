@@ -28,9 +28,21 @@ function App() {
 
 
           {/* Routes admin protégées */}
-          <Route path="/admin" element={<AdminAuthWrapper><AdminLayout /></AdminAuthWrapper>}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="users" element={<AdminUsers />} />
+          <Route path="/admin" element={
+          <AdminAuthWrapper>
+            <AdminLayout />
+          </AdminAuthWrapper>
+          }
+            >
+            <Route index element={<Admin />} />
+            <Route path="events" element={<AdminEvents />} />
+            <Route path="login" element={<AdminLogin />} />
+            <Route path="home" element={<AdminHome />} />
+            <Route path="media" element={<AdminMedia />} />            
+            <Route path="pages" element={<AdminPages />} />
+            <Route path="projets" element={<AdminProjets />} />
+            <Route path="appearance" element={<AppearanceSettings />} />
+            <Route path="security" element={SecuritySettings />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 
