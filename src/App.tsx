@@ -8,7 +8,7 @@ import Contact from './pages/Contact';
 import Evenements from './pages/Evenements';
 import Projets from './pages/Projets';
 import Admin from './pages/Admin';
-import NotFoundPage from './components/NotFoundPage'; // Add proper import
+import NotFoundPage from './components/NotFoundPage';
 
 function App() {
   return (
@@ -20,7 +20,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/evenements" element={<Evenements />} />
         <Route path="/admin/*" element={<Admin />} />
-        <Route path="*" element={<NotFoundPage />} /> {/* Use the imported component */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );
