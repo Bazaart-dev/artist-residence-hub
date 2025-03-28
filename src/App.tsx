@@ -10,6 +10,8 @@ import Admin from './pages/Admin';
 import Presentation from './pages/Presentation';
 import Projets from './pages/Projets';
 import Evenements from './pages/Evenements';
+import NotFoundPage from './pages/NotFoundPage';
+
 
 // Admin
 import AdminAuthWrapper from './components/AdminAuthWrapper';
