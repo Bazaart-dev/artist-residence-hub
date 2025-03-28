@@ -58,7 +58,7 @@ const AdminAuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) {
-    // Redirige vers la page de login avec l'URL de retour
+    // Redirige vers la page de login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

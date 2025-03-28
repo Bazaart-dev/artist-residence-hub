@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
@@ -22,9 +23,8 @@ const LoginPage = () => {
 
       if (error) throw error;
 
-      // Redirige vers la page précédente ou /admin
-      const from = location.state?.from?.pathname || '/admin';
-      navigate(from, { replace: true });
+      // Toujours rediriger vers /admin après connexion
+      navigate('/admin', { replace: true });
       
     } catch (error) {
       toast.error('Identifiants incorrects');

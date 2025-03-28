@@ -53,12 +53,11 @@ const Login = () => {
         window.dispatchEvent(new Event('storage'));
       }
 
-      // Redirige vers la page précédente ou /admin
-      const from = location.state?.from?.pathname || '/admin';
+      // Toujours rediriger vers /admin après connexion
       toast.success('Connexion réussie', {
         description: 'Vous êtes maintenant connecté',
       });
-      navigate(from, { replace: true });
+      navigate('/admin', { replace: true });
       
     } catch (error) {
       toast.error('Échec de la connexion', {
@@ -142,10 +141,9 @@ const Login = () => {
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Connexion</TabsTrigger>
                 <TabsTrigger value="signup">Inscription</TabsTrigger>
-                <TabsTrigger value="reset">Mot de passe</TabsTrigger>
               </TabsList>
               
               <TabsContent value="signin">
@@ -166,7 +164,17 @@ const Login = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Mot de passe</Label>
+                    <div className="flex justify-between items-center">
+                      <Label htmlFor="password">Mot de passe</Label>
+                      <Button 
+                        variant="link" 
+                        className="p-0 h-auto text-xs" 
+                        type="button"
+                        onClick={() => setActiveTab('reset')}
+                      >
+                        Mot de passe oublié?
+                      </Button>
+                    </div>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
                       <Input
@@ -274,6 +282,14 @@ const Login = () => {
                       <KeyRound size={16} className="mr-2" />
                       {loading ? 'Envoi en cours...' : 'Réinitialiser le mot de passe'}
                     </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full mt-2"
+                      onClick={() => setActiveTab('signin')}
+                    >
+                      Retour à la connexion
+                    </Button>
                   </form>
                 ) : (
                   <div className="text-center py-4">
@@ -283,9 +299,10 @@ const Login = () => {
                       onClick={() => {
                         setResetSent(false);
                         setResetEmail('');
+                        setActiveTab('signin');
                       }}
                     >
-                      Envoyer un nouveau lien
+                      Retour à la connexion
                     </Button>
                   </div>
                 )}
