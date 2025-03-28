@@ -16,7 +16,8 @@ import AdminEvents from '@/components/admin/AdminEvents';
 import AdminHome from '@/components/admin/AdminHome';
 import AdminMedia from '@/components/admin/AdminMedia';
 import AdminPages from '@/components/admin/AdminPages';
-import AdminProjects from '@/components/admin/AdminProjects'; // Nom corrigé
+import AdminProjects from '@/components/admin/AdminProjects';
+import AdminLogin from '@/components/admin/AdminLogin';
 import AdminSettings from '@/components/admin/AdminSettings';
 import AppearanceSettings from '@/components/admin/AppearanceSettings';
 import SecuritySettings from '@/components/admin/SecuritySettings';
