@@ -3,10 +3,15 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { SiteProvider } from './contexts/SiteContext';
 import { Toaster } from '@/components/ui/sonner';
 import Index from './pages/index';
-import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
+import Contact from './pages/Contact';
+import Admin from './pages/admin';
+import Presentation from './pages/presentation';
+import Projets from './pages/projets';
+import Evenements from './pages/evenements';
+
 import AdminLayout from './admin/AdminLayout';
 import AdminAuthWrapper from './components/AdminAuthWrapper';
+
 
 function App() {
   return (
