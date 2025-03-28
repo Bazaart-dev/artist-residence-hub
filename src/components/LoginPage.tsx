@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 
@@ -9,7 +9,6 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +22,7 @@ const LoginPage = () => {
 
       if (error) throw error;
 
-      // Toujours rediriger vers /admin après connexion
+      // Always redirect to /admin after login
       navigate('/admin', { replace: true });
       
     } catch (error) {
@@ -35,7 +34,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <form onSubmit={handleLogin} className="p-8 border rounded-lg shadow-lg w-96">
+      <form onSubmit={handleLogin} className="p-8 border rounded-lg shadow-lg w-96 bg-white">
         <h2 className="text-2xl font-bold mb-6">Connexion Admin</h2>
         <div className="space-y-4">
           <input
@@ -44,7 +43,7 @@ const LoginPage = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-white"
           />
           <input
             type="password"
@@ -52,7 +51,7 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mot de passe"
             required
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-white"
           />
           <button
             type="submit"

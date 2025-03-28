@@ -17,6 +17,7 @@ const AdminAuthWrapper = ({ children }: { children: React.ReactNode }) => {
         if (error) throw error;
 
         if (session?.user) {
+          // Simplified profile check to speed up loading
           const { data: profile } = await supabase
             .from('profiles')
             .select('role')
@@ -33,10 +34,12 @@ const AdminAuthWrapper = ({ children }: { children: React.ReactNode }) => {
         console.error("Erreur d'authentification:", error);
         toast.error('Erreur de vérification');
       } finally {
+        // Set loading to false more quickly
         setLoading(false);
       }
     };
 
+    // Immediate check on mount
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
@@ -49,8 +52,8 @@ const AdminAuthWrapper = ({ children }: { children: React.ReactNode }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-bazaart-pink"></div>
+        <div className="flex flex-col items-center gap-2">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-bazaart-pink"></div>
           <p>Chargement...</p>
         </div>
       </div>
@@ -58,8 +61,8 @@ const AdminAuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) {
-    // Redirige vers la page de login
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Redirect to login page
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

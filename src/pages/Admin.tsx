@@ -87,7 +87,7 @@ const Admin = () => {
   // Sidebar pour les écrans plus grands
   const DesktopSidebar = () => (
     <aside className={cn(
-      "bg-gray-900 text-white h-screen transition-all duration-300 overflow-y-auto",
+      "bg-gray-900 text-white h-full min-h-screen fixed left-0 top-0 bottom-0 transition-all duration-300 overflow-y-auto flex flex-col",
       sidebarOpen ? "w-64" : "w-20"
     )}>
       <div className="p-4 flex items-center justify-between">
@@ -102,7 +102,7 @@ const Admin = () => {
         </Button>
       </div>
 
-      <nav className="mt-6">
+      <nav className="mt-6 flex-grow">
         <ul className="space-y-1">
           {navLinks.map((link) => (
             <li key={link.href}>
@@ -120,7 +120,7 @@ const Admin = () => {
           ))}
         </ul>
 
-        <div className="mt-10 pt-4 border-t border-gray-700">
+        <div className="mt-auto pt-4 border-t border-gray-700">
           <p className={cn("px-4 text-xs text-gray-400 mb-2", !sidebarOpen && "hidden")}>
             Paramètres
           </p>
@@ -157,11 +157,11 @@ const Admin = () => {
           <Menu size={20} />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 bg-gray-900 text-white">
+      <SheetContent side="left" className="p-0 bg-gray-900 text-white overflow-y-auto w-[280px]">
         <div className="p-4">
           <h2 className="font-bold text-xl">Admin</h2>
         </div>
-        <nav className="mt-6">
+        <nav className="mt-6 flex-grow flex flex-col h-[calc(100%-70px)]">
           <ul className="space-y-1">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -179,7 +179,7 @@ const Admin = () => {
             ))}
           </ul>
 
-          <div className="mt-10 pt-4 border-t border-gray-700">
+          <div className="mt-auto pt-4 border-t border-gray-700">
             <p className="px-4 text-xs text-gray-400 mb-2">
               Paramètres
             </p>
@@ -206,37 +206,37 @@ const Admin = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar pour desktop */}
       <div className="hidden md:block">
         <DesktopSidebar />
       </div>
       
-      <div className="flex-1 flex flex-col">
-        <header className="bg-white shadow-sm border-b py-4 px-6">
+      <div className={cn(
+        "flex-1 flex flex-col",
+        sidebarOpen ? "md:ml-64" : "md:ml-20"
+      )}>
+        <header className="bg-white shadow-sm border-b py-3 px-4 sm:px-6 sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MobileSidebar />
               <LayoutDashboard className="text-bazaart-pink" />
               <h1 className="text-xl font-bold">Admin Panel</h1>
             </div>
-            <div className="flex items-center gap-4">
-              <Link to="/" className="flex items-center gap-1 hover:text-bazaart-pink">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Link to="/" className="flex items-center gap-1 hover:text-bazaart-pink text-sm sm:text-base">
                 <Home size={16} />
-                <span>Retour au site</span>
+                <span className="hidden sm:inline">Retour au site</span>
               </Link>
-              <Button variant="ghost" onClick={handleLogout}>
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="text-sm sm:text-base">
                 <LogOut size={16} className="mr-2" />
-                Déconnexion
+                <span className="hidden sm:inline">Déconnexion</span>
               </Button>
             </div>
           </div>
         </header>
         
-        <div className={cn(
-          "flex-grow p-6",
-          sidebarOpen ? "md:ml-64" : "md:ml-20"
-        )}>
+        <div className="flex-grow p-3 sm:p-6 overflow-x-hidden">
           <Outlet />
         </div>
       </div>
